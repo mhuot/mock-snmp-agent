@@ -1,0 +1,6 @@
+# Mock SNMP Agent Requirements
+# Official Lextudio SNMP Simulator package
+snmpsim-lextudio==1.1.1
+
+# Optional: Additional simulation data for various device types
+# snmpsim-data>=1.0.0

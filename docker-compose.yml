@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  snmp-simulator:
+    build: .
+    ports:
+      - "11611:161/udp"
+    volumes:
+      - ./data:/usr/local/snmpsim/data:ro
+    environment:
+      - PYTHONWARNINGS=ignore
+    restart: unless-stopped
+    
+  # Extended version with additional device data
+  snmp-simulator-extended:
+    build:
+      context: .
+      dockerfile: Dockerfile.extended
+    ports:
+      - "11611:161/udp"
+    volumes:
+      - ./data:/usr/local/snmpsim/data:ro
+    environment:
+      - PYTHONWARNINGS=ignore
+    restart: unless-stopped
+    profiles: ["extended"]
+    
+  # Alternative configuration with multiple endpoints
+  snmp-simulator-multi:
+    build: .
+    ports:
+      - "11611:161/udp"
+      - "11612:162/udp"
+      - "11613:163/udp"
+    volumes:
+      - ./data:/usr/local/snmpsim/data:ro
+    environment:
+      - PYTHONWARNINGS=ignore
+    command: >
+      snmpsim-command-responder
+      --data-dir=/usr/local/snmpsim/data
+      --agent-udpv4-endpoint=0.0.0.0:161
+      --agent-udpv4-endpoint=0.0.0.0:162
+      --agent-udpv4-endpoint=0.0.0.0:163
+    restart: unless-stopped
+    profiles: ["multi"]

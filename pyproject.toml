@@ -1,0 +1,141 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mock-snmp-agent"
+version = "1.0.0"
+description = "A comprehensive SNMP simulator for testing and development purposes"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Mock SNMP Agent Contributors"},
+]
+maintainers = [
+    {name = "Mock SNMP Agent Contributors"},
+]
+keywords = [
+    "snmp",
+    "simulator",
+    "testing",
+    "network",
+    "monitoring",
+    "development",
+    "mock",
+    "agent"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Networking :: Monitoring",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Internet",
+    "Environment :: Console",
+    "Environment :: No Input/Output (Daemon)",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "snmpsim-lextudio>=1.1.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pylint>=2.11.0",
+    "bandit>=1.7.0",
+    "safety>=2.0.0",
+    "black>=22.0.0",
+]
+test = [
+    "pytest>=6.0.0",
+    "pytest-cov>=3.0.0",
+    "pytest-timeout>=2.0.0",
+]
+extended = [
+    "snmpsim-data>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/mock-snmp-agent"
+Documentation = "https://github.com/yourusername/mock-snmp-agent#readme"
+Repository = "https://github.com/yourusername/mock-snmp-agent.git"
+"Bug Tracker" = "https://github.com/yourusername/mock-snmp-agent/issues"
+Changelog = "https://github.com/yourusername/mock-snmp-agent/releases"
+
+[project.scripts]
+mock-snmp-agent = "mock_snmp_agent:main"
+
+[tool.setuptools]
+py-modules = ["mock_snmp_agent", "test_basic", "test_prd_requirements", "performance_test"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  venv
+  | __pycache__
+  | \.git
+  | \.pytest_cache
+  | build
+  | dist
+)/
+'''
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "invalid-name",
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --tb=short"
+testpaths = [
+    "tests",
+    ".",
+]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+timeout = 300
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "venv/*",
+    "*/venv/*",
+    "__pycache__/*",
+    "*/site-packages/*",
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

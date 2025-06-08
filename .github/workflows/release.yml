@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        python test_basic.py
+        python test_prd_requirements.py
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get the tag name
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        
+        # Get the previous tag
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        
+        # Generate changelog
+        if [ -n "$PREV_TAG" ]; then
+          echo "## Changes since $PREV_TAG" > CHANGELOG.md
+          git log --pretty=format:"- %s (%h)" $PREV_TAG..HEAD >> CHANGELOG.md
+        else
+          echo "## Initial Release" > CHANGELOG.md
+          echo "- First release of Mock SNMP Agent" >> CHANGELOG.md
+        fi
+        
+        # Set output for use in release
+        echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+
+    - name: Create Release Archive
+      run: |
+        # Create source archive excluding unnecessary files
+        mkdir -p release-assets
+        tar -czf release-assets/snmpsim-source.tar.gz \
+          --exclude='.git*' \
+          --exclude='venv' \
+          --exclude='__pycache__' \
+          --exclude='*.pyc' \
+          --exclude='.pytest_cache' \
+          --exclude='.coverage' \
+          .
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.changelog.outputs.tag_name }}
+        name: Release ${{ steps.changelog.outputs.tag_name }}
+        body_path: CHANGELOG.md
+        files: |
+          release-assets/snmpsim-source.tar.gz
+          requirements.txt
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update latest tag
+      run: |
+        git tag -f latest
+        git push origin latest --force
