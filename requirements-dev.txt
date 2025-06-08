@@ -1,0 +1,19 @@
+# Development dependencies for Mock SNMP Agent
+# Include base requirements
+-r requirements.txt
+
+# Development tools
+pylint>=2.11.0
+bandit>=1.7.0
+safety>=2.0.0
+black>=22.0.0
+
+# Testing framework
+pytest>=6.0.0
+pytest-cov>=3.0.0
+pytest-timeout>=2.0.0
+
+# Build tools
+setuptools>=64
+wheel
+build

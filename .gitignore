@@ -155,6 +155,20 @@ Thumbs.db
 *.snmprec.db
 *.snmprec.db-journal
 
+# Custom data directories (user-generated content)
+custom-data/
+**/custom-data/
+
+# User-generated SNMP data files (keep only the basic public.snmprec)
+data/delay.snmprec
+data/error.snmprec
+data/writecache.snmprec
+data/recorded/
+data/variation/
+data/**/
+!data/public.snmprec
+!data/README.md
+
 # Docker
 .dockerignore
 

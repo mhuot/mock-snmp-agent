@@ -42,7 +42,7 @@ A comprehensive SNMP simulator for testing and development purposes, using the o
 - **Agent Restart Simulation**: Easy start/stop for testing reconnection scenarios
 
 ### ⚡ Performance
-- **High Throughput**: Tested at 293+ req/sec with 60ms average latency
+- **High Throughput**: Tested at 240+ req/sec with ~70ms average latency
 - **Concurrent Handling**: Multi-threaded request processing
 - **Scalable**: Supports multiple simultaneous SNMP clients
 
@@ -71,26 +71,30 @@ Choose one of the following deployment methods:
 
 1. **Clone this repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/mhuot/mock-snmp-agent.git
    cd mock-snmp-agent
    ```
 
-2. **Build and run with Docker Compose:**
-   ```bash
-   # Basic version
-   docker-compose up -d
-   
-   # Extended version with additional device data
-   docker-compose --profile extended up -d snmp-simulator-extended
-   ```
-
-3. **Or build and run manually:**
+2. **Build the Docker image:**
    ```bash
    docker build -t mock-snmp-agent .
+   ```
+
+3. **Run with Docker Compose (recommended):**
+   ```bash
+   # Basic version
+   docker compose up -d
+   
+   # Extended version with additional device data
+   docker compose --profile extended up -d snmp-simulator-extended
+   ```
+
+4. **Or run manually:**
+   ```bash
    docker run -p 11611:161/udp mock-snmp-agent
    ```
 
-4. **With custom data directory:**
+5. **With custom data directory:**
    ```bash
    docker run -p 11611:161/udp \
               -v $(pwd)/custom-data:/usr/local/snmpsim/data \
@@ -101,8 +105,8 @@ Choose one of the following deployment methods:
 
 1. **Clone this repository:**
    ```bash
-   git clone <repository-url>
-   cd snmpsim
+   git clone https://github.com/mhuot/mock-snmp-agent.git
+   cd mock-snmp-agent
    ```
 
 2. **Set up Python virtual environment:**
@@ -125,7 +129,7 @@ Choose one of the following deployment methods:
 
 1. **Start with Docker Compose:**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 2. **Or run the container directly:**
@@ -159,7 +163,7 @@ Choose one of the following deployment methods:
    
    # SNMPv3 with authentication and privacy
    snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X privatus \
-       127.0.0.1:11611 1.3.6.1.2.1.1.1.0
+       -n public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
    ```
 
 ## Advanced Usage
@@ -241,7 +245,7 @@ python3 performance_test.py
 snmpget -v1 -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X privatus \
-    127.0.0.1:11611 1.3.6.1.2.1.1.1.0
+    -n public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 
 # Test different operations
 snmpgetnext -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1
@@ -261,18 +265,28 @@ The simulator uses the built-in data files from the snmpsim-lextudio package, in
 
 ### Common Issues
 
-1. **"No Response" errors:**
-   - Check if simulator is running: `ps aux | grep snmpsim`
+1. **Docker: "Unable to find image" error:**
+   ```bash
+   # Build the image first
+   docker build -t mock-snmp-agent .
+   # Then run
+   docker run -p 11611:161/udp mock-snmp-agent
+   ```
+
+2. **"No Response" errors:**
+   - Check if simulator is running: `ps aux | grep snmpsim` or `docker ps`
    - Verify correct port: default is 11611
    - Check firewall settings
+   - For Docker: ensure port mapping is correct (`-p 11611:161/udp`)
 
-2. **"No Such Instance" errors:**
+3. **"No Such Instance" errors:**
    - Verify OID exists in simulation data
    - Use correct community string
    - Check data file is properly loaded
 
-3. **Permission denied:**
+4. **Permission denied:**
    - Don't run as root unless binding to privileged ports (<1024)
+   - For Docker: no special permissions needed
 
 ### Debugging
 
@@ -303,8 +317,8 @@ mock-snmp-agent/
 ## Performance Results
 
 Based on testing:
-- **Throughput**: 293+ requests/second
-- **Latency**: ~60ms average response time
+- **Throughput**: 240+ requests/second
+- **Latency**: ~70ms average response time
 - **Protocols**: SNMPv1, v2c, v3 all working
 - **Operations**: GET, GETNEXT, GETBULK, SET all functional
 - **Behaviors**: Delay, error, writecache simulations working

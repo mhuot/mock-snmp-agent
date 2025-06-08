@@ -30,14 +30,14 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements-dev.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
 
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
     - name: Run pylint
       run: |
@@ -109,7 +109,7 @@ jobs:
 
     - name: Check for known vulnerabilities
       run: |
-        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
         safety check --json --output safety-report.json || true
         safety check
 

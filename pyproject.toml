@@ -66,11 +66,11 @@ extended = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/mock-snmp-agent"
-Documentation = "https://github.com/yourusername/mock-snmp-agent#readme"
-Repository = "https://github.com/yourusername/mock-snmp-agent.git"
-"Bug Tracker" = "https://github.com/yourusername/mock-snmp-agent/issues"
-Changelog = "https://github.com/yourusername/mock-snmp-agent/releases"
+Homepage = "https://github.com/mhuot/snmpsim"
+Documentation = "https://github.com/mhuot/snmpsim#readme"
+Repository = "https://github.com/mhuot/snmpsim.git"
+"Bug Tracker" = "https://github.com/mhuot/snmpsim/issues"
+Changelog = "https://github.com/mhuot/snmpsim/releases"
 
 [project.scripts]
 mock-snmp-agent = "mock_snmp_agent:main"

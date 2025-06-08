@@ -10,37 +10,55 @@ import time
 import statistics
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+
 def snmp_request(request_id):
     """Execute a single SNMP GET request and measure latency"""
     start_time = time.time()
     try:
-        result = subprocess.run([
-            "snmpget", "-v2c", "-c", "public", "-t", "1", "-r", "0",
-            "127.0.0.1:11611", "1.3.6.1.2.1.1.1.0"
-        ], capture_output=True, text=True, timeout=5, check=False)
+        result = subprocess.run(
+            [
+                "snmpget",
+                "-v2c",
+                "-c",
+                "public",
+                "-t",
+                "1",
+                "-r",
+                "0",
+                "127.0.0.1:11611",
+                "1.3.6.1.2.1.1.1.0",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
 
         end_time = time.time()
         latency_ms = (end_time - start_time) * 1000
 
         success = result.returncode == 0 and "STRING:" in result.stdout
         return {
-            'id': request_id,
-            'latency_ms': latency_ms,
-            'success': success,
-            'error': result.stderr if not success else None
+            "id": request_id,
+            "latency_ms": latency_ms,
+            "success": success,
+            "error": result.stderr if not success else None,
         }
     except Exception as exc:
         end_time = time.time()
         return {
-            'id': request_id,
-            'latency_ms': (end_time - start_time) * 1000,
-            'success': False,
-            'error': str(exc)
+            "id": request_id,
+            "latency_ms": (end_time - start_time) * 1000,
+            "success": False,
+            "error": str(exc),
         }
+
 
 def performance_test(num_requests=100, max_workers=20):
     """Run performance test with specified parameters"""
-    print(f"Performance Test: {num_requests} requests with {max_workers} concurrent workers")
+    print(
+        f"Performance Test: {num_requests} requests with {max_workers} concurrent workers"
+    )
     print("=" * 60)
 
     start_time = time.time()
@@ -57,11 +75,11 @@ def performance_test(num_requests=100, max_workers=20):
     end_time = time.time()
 
     # Analyze results
-    successful_results = [r for r in results if r['success']]
-    failed_results = [r for r in results if not r['success']]
+    successful_results = [r for r in results if r["success"]]
+    failed_results = [r for r in results if not r["success"]]
 
     if successful_results:
-        latencies = [r['latency_ms'] for r in successful_results]
+        latencies = [r["latency_ms"] for r in successful_results]
 
         print("\nResults Summary:")
         print(f"Total requests: {num_requests}")
@@ -80,11 +98,13 @@ def performance_test(num_requests=100, max_workers=20):
 
         # Check PRD requirements
         print("\nPRD Requirements Check:")
-        throughput = num_requests/(end_time - start_time)
+        throughput = num_requests / (end_time - start_time)
         avg_latency = statistics.mean(latencies)
-        throughput_pass = '✓ PASS' if throughput >= 1000 else '✗ FAIL'
-        latency_pass = '✓ PASS' if avg_latency < 10 else '✗ FAIL'
-        print(f"✓ Throughput target (1000 req/sec): {throughput_pass} ({throughput:.1f} req/sec)")
+        throughput_pass = "✓ PASS" if throughput >= 1000 else "✗ FAIL"
+        latency_pass = "✓ PASS" if avg_latency < 10 else "✗ FAIL"
+        print(
+            f"✓ Throughput target (1000 req/sec): {throughput_pass} ({throughput:.1f} req/sec)"
+        )
         print(f"✓ Latency target (<10ms): {latency_pass} ({avg_latency:.2f}ms avg)")
 
         if failed_results:
@@ -93,6 +113,7 @@ def performance_test(num_requests=100, max_workers=20):
                 print(f"  {i+1}. Request {result['id']}: {result['error']}")
     else:
         print("No successful requests - check if simulator is running!")
+
 
 if __name__ == "__main__":
     print("SNMP Simulator Performance Test")
