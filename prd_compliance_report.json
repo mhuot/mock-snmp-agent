@@ -1,0 +1,206 @@
+{
+  "summary": {
+    "total_tests": 18,
+    "passed": 17,
+    "failed": 1,
+    "skipped": 0,
+    "success_rate": 94.44444444444444,
+    "duration": 20.113753080368042
+  },
+  "categories": {
+    "Dependencies": {
+      "pass": 8,
+      "fail": 0,
+      "skip": 0
+    },
+    "Protocol": {
+      "pass": 5,
+      "fail": 1,
+      "skip": 0
+    },
+    "Configuration": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0
+    },
+    "Simulation": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0
+    },
+    "Performance": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0
+    },
+    "Testing": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "detailed_results": [
+    {
+      "requirement_id": "DEP.SNMPGET",
+      "requirement_description": "snmpget tool availability",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Tool found in PATH",
+      "test_method": "which",
+      "duration": 0.0035729408264160156
+    },
+    {
+      "requirement_id": "DEP.SNMPGETNEXT",
+      "requirement_description": "snmpgetnext tool availability",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Tool found in PATH",
+      "test_method": "which",
+      "duration": 0.0021431446075439453
+    },
+    {
+      "requirement_id": "DEP.SNMPBULKGET",
+      "requirement_description": "snmpbulkget tool availability",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Tool found in PATH",
+      "test_method": "which",
+      "duration": 0.0021550655364990234
+    },
+    {
+      "requirement_id": "DEP.REQUESTS",
+      "requirement_description": "requests Python module",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Module available",
+      "test_method": "import",
+      "duration": 6.9141387939453125e-06
+    },
+    {
+      "requirement_id": "DEP.WEBSOCKET",
+      "requirement_description": "websocket Python module",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Module available",
+      "test_method": "import",
+      "duration": 4.0531158447265625e-06
+    },
+    {
+      "requirement_id": "DEP.YAML",
+      "requirement_description": "yaml Python module",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Module available",
+      "test_method": "import",
+      "duration": 1.9073486328125e-06
+    },
+    {
+      "requirement_id": "DEP.FASTAPI",
+      "requirement_description": "fastapi Python module",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Module available",
+      "test_method": "import",
+      "duration": 0.19252705574035645
+    },
+    {
+      "requirement_id": "DEP.UVICORN",
+      "requirement_description": "uvicorn Python module",
+      "category": "Dependencies",
+      "status": "PASS",
+      "details": "Module available",
+      "test_method": "import",
+      "duration": 0.027419328689575195
+    },
+    {
+      "requirement_id": "4.1.1.a",
+      "requirement_description": "SNMPv1 support",
+      "category": "Protocol",
+      "status": "PASS",
+      "details": "SNMPv1 GET operation successful",
+      "test_method": "snmpget",
+      "duration": 0.022884130477905273
+    },
+    {
+      "requirement_id": "4.1.1.b",
+      "requirement_description": "SNMPv2c support",
+      "category": "Protocol",
+      "status": "PASS",
+      "details": "SNMPv2c GET operation successful",
+      "test_method": "snmpget",
+      "duration": 0.023217201232910156
+    },
+    {
+      "requirement_id": "4.1.1.c",
+      "requirement_description": "SNMPv3 support",
+      "category": "Protocol",
+      "status": "FAIL",
+      "details": "Command failed: Timeout: No Response from 127.0.0.1:11611.\n",
+      "test_method": "snmpget",
+      "duration": 6.0804762840271
+    },
+    {
+      "requirement_id": "4.1.1.d",
+      "requirement_description": "GETBULK operations",
+      "category": "Protocol",
+      "status": "PASS",
+      "details": "GETBULK operation returned multiple values",
+      "test_method": "snmpbulkget",
+      "duration": 0.026358842849731445
+    },
+    {
+      "requirement_id": "4.1.2.a",
+      "requirement_description": "System MIB support",
+      "category": "Protocol",
+      "status": "PASS",
+      "details": "System MIB accessible",
+      "test_method": "snmpget",
+      "duration": 0.022225141525268555
+    },
+    {
+      "requirement_id": "4.1.2.b",
+      "requirement_description": "Interface MIB support",
+      "category": "Protocol",
+      "status": "PASS",
+      "details": "Interface MIB accessible",
+      "test_method": "snmpget",
+      "duration": 0.02147507667541504
+    },
+    {
+      "requirement_id": "4.4.1",
+      "requirement_description": "YAML configuration loading",
+      "category": "Configuration",
+      "status": "PASS",
+      "details": "Configuration file parsed successfully",
+      "test_method": "YAML load",
+      "duration": 0.0021479129791259766
+    },
+    {
+      "requirement_id": "4.3.1",
+      "requirement_description": "Simulation behaviors configuration",
+      "category": "Simulation",
+      "status": "PASS",
+      "details": "Simulation behaviors configured in YAML",
+      "test_method": "Config check",
+      "duration": 0.0013358592987060547
+    },
+    {
+      "requirement_id": "5.1.a",
+      "requirement_description": "SNMP response time requirement",
+      "category": "Performance",
+      "status": "PASS",
+      "details": "Average SNMP response time: 20.81ms",
+      "test_method": "snmpget",
+      "duration": 0.20823884010314941
+    },
+    {
+      "requirement_id": "TEST.SUITE",
+      "requirement_description": "78+ Automated test suite",
+      "category": "Testing",
+      "status": "PASS",
+      "details": "All automated tests passed",
+      "test_method": "pytest",
+      "duration": 3.434885025024414
+    }
+  ]
+}

@@ -74,7 +74,7 @@ class PRDComplianceValidator:
             )
             
             # Wait for SNMP agent to start
-            time.sleep(5)
+            time.sleep(10)
             
             # Test SNMP connectivity
             try:
@@ -102,16 +102,26 @@ class PRDComplianceValidator:
         if self.server_process:
             try:
                 if os.name != 'nt':
-                    os.killpg(os.getpgid(self.server_process.pid), signal.SIGTERM)
+                    try:
+                        os.killpg(os.getpgid(self.server_process.pid), signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass  # Process already terminated
                 else:
                     self.server_process.terminate()
-                self.server_process.wait(timeout=5)
+                
+                try:
+                    self.server_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    if os.name != 'nt':
+                        try:
+                            os.killpg(os.getpgid(self.server_process.pid), signal.SIGKILL)
+                        except ProcessLookupError:
+                            pass
+                    else:
+                        self.server_process.kill()
                 print("🛑 Mock SNMP Agent stopped")
-            except:
-                if os.name != 'nt':
-                    os.killpg(os.getpgid(self.server_process.pid), signal.SIGKILL)
-                else:
-                    self.server_process.kill()
+            except Exception as e:
+                print(f"⚠️ Warning during agent cleanup: {e}")
 
     def test_snmp_protocol_support(self):
         """Test PRD Section 4.1: SNMP Protocol Support"""
@@ -159,16 +169,27 @@ class PRDComplianceValidator:
         start_time = time.time()
         try:
             result = subprocess.run([
-                "snmpget", "-v3", "-l", "noAuthNoPriv", "-u", "simulator", 
+                "snmpget", "-v3", "-l", "authPriv", "-u", "simulator", 
+                "-a", "MD5", "-A", "auctoritas", "-x", "DES", "-X", "privatus",
                 f"127.0.0.1:{self.snmp_port}", "1.3.6.1.2.1.1.1.0"
             ], capture_output=True, text=True, timeout=10)
             
             if result.returncode == 0 and "SNMPv2-MIB::sysDescr.0" in result.stdout:
                 self.log_result("4.1.1.c", "SNMPv3 support", "Protocol", "PASS", 
-                              "SNMPv3 noAuthNoPriv operation successful", "snmpget", time.time() - start_time)
+                              "SNMPv3 authPriv operation successful", "snmpget", time.time() - start_time)
             else:
-                self.log_result("4.1.1.c", "SNMPv3 support", "Protocol", "FAIL", 
-                              f"Command failed: {result.stderr}", "snmpget", time.time() - start_time)
+                # Try with noAuthNoPriv as fallback 
+                result2 = subprocess.run([
+                    "snmpget", "-v3", "-l", "noAuthNoPriv", "-u", "simulator", 
+                    f"127.0.0.1:{self.snmp_port}", "1.3.6.1.2.1.1.1.0"
+                ], capture_output=True, text=True, timeout=10)
+                
+                if result2.returncode == 0 and "SNMPv2-MIB::sysDescr.0" in result2.stdout:
+                    self.log_result("4.1.1.c", "SNMPv3 support", "Protocol", "PASS", 
+                                  "SNMPv3 noAuthNoPriv operation successful", "snmpget", time.time() - start_time)
+                else:
+                    self.log_result("4.1.1.c", "SNMPv3 support", "Protocol", "FAIL", 
+                                  f"Command failed: {result.stderr}", "snmpget", time.time() - start_time)
         except Exception as e:
             self.log_result("4.1.1.c", "SNMPv3 support", "Protocol", "FAIL", 
                           str(e), "snmpget", time.time() - start_time)

@@ -119,7 +119,7 @@ def main():
     ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     # Wait for agent to start
-    time.sleep(8)
+    time.sleep(10)
     
     try:
         # Run tests

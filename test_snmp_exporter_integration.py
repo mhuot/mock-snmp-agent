@@ -482,28 +482,48 @@ class SNMPExporterIntegrationTester:
         if self.mock_agent_process:
             try:
                 if os.name != 'nt':
-                    os.killpg(os.getpgid(self.mock_agent_process.pid), signal.SIGTERM)
+                    try:
+                        os.killpg(os.getpgid(self.mock_agent_process.pid), signal.SIGTERM)
+                    except (ProcessLookupError, OSError):
+                        pass
                 else:
                     self.mock_agent_process.terminate()
-                self.mock_agent_process.wait(timeout=5)
-            except:
-                if os.name != 'nt':
-                    os.killpg(os.getpgid(self.mock_agent_process.pid), signal.SIGKILL)
-                else:
-                    self.mock_agent_process.kill()
+                
+                try:
+                    self.mock_agent_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    if os.name != 'nt':
+                        try:
+                            os.killpg(os.getpgid(self.mock_agent_process.pid), signal.SIGKILL)
+                        except (ProcessLookupError, OSError):
+                            pass
+                    else:
+                        self.mock_agent_process.kill()
+            except Exception:
+                pass
         
         if self.snmp_exporter_process:
             try:
                 if os.name != 'nt':
-                    os.killpg(os.getpgid(self.snmp_exporter_process.pid), signal.SIGTERM)
+                    try:
+                        os.killpg(os.getpgid(self.snmp_exporter_process.pid), signal.SIGTERM)
+                    except (ProcessLookupError, OSError):
+                        pass
                 else:
                     self.snmp_exporter_process.terminate()
-                self.snmp_exporter_process.wait(timeout=5)
-            except:
-                if os.name != 'nt':
-                    os.killpg(os.getpgid(self.snmp_exporter_process.pid), signal.SIGKILL)
-                else:
-                    self.snmp_exporter_process.kill()
+                
+                try:
+                    self.snmp_exporter_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    if os.name != 'nt':
+                        try:
+                            os.killpg(os.getpgid(self.snmp_exporter_process.pid), signal.SIGKILL)
+                        except (ProcessLookupError, OSError):
+                            pass
+                    else:
+                        self.snmp_exporter_process.kill()
+            except Exception:
+                pass
 
     def generate_report(self):
         """Generate integration test report"""

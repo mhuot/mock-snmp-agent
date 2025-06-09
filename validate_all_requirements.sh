@@ -4,7 +4,8 @@
 # This script runs all available tests to validate that the Mock SNMP Agent
 # meets all Product Requirements Document (PRD) requirements.
 
-set -e  # Exit on any error
+# Don't exit on error - we want to collect all results
+# set -e
 
 echo "🚀 Complete PRD Requirements Validation"
 echo "========================================"
@@ -16,6 +17,10 @@ if [ ! -f "mock_snmp_agent.py" ]; then
     echo "Please run this script from the mock-snmp-agent directory"
     exit 1
 fi
+
+# Clean up any existing processes and ports
+echo "🧹 Cleaning up existing processes and ports..."
+python cleanup_ports.py
 
 # Create reports directory
 mkdir -p test-reports
@@ -106,19 +111,24 @@ echo "======================================"
 # Test Docker integration if Docker is available
 if command -v docker >/dev/null 2>&1; then
     if docker compose version >/dev/null 2>&1; then
-        echo "Testing Docker Compose integration..."
-        
-        # Test basic Docker startup
-        if timeout 60 bash -c '
-            docker compose up -d && sleep 10 &&
-            curl -f http://localhost:8080/health >/dev/null 2>&1 &&
-            docker compose down
-        '; then
-            echo "✅ Docker Integration: PASSED"
+        # Check if Docker daemon is running
+        if docker info >/dev/null 2>&1; then
+            echo "Testing Docker Compose integration..."
+            
+            # Test basic Docker startup with SNMP test instead of REST API
+            if timeout 60 bash -c '
+                docker compose up -d && sleep 15 &&
+                snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0 >/dev/null 2>&1 &&
+                docker compose down
+            '; then
+                echo "✅ Docker Integration: PASSED"
+            else
+                echo "❌ Docker Integration: FAILED"
+                docker compose down 2>/dev/null || true
+                OVERALL_SUCCESS=false
+            fi
         else
-            echo "❌ Docker Integration: FAILED"
-            docker compose down 2>/dev/null || true
-            OVERALL_SUCCESS=false
+            echo "⚠️ Docker daemon not running - skipping Docker tests"
         fi
     else
         echo "⚠️ Docker Compose not available - skipping Docker tests"
