@@ -1,0 +1,9 @@
+# Simple configuration example for Mock SNMP Agent
+# This configuration adds a 100ms delay to all responses
+
+simulation:
+  behaviors:
+    delay:
+      enabled: true
+      global_delay: 100        # milliseconds
+      deviation: 20            # +/- 20ms random variation

@@ -1,0 +1,22 @@
+# Counter wrap testing configuration
+# Accelerated counter wrap simulation for fast testing
+
+simulation:
+  behaviors:
+    counter_wrap:
+      enabled: true
+      acceleration_factor: 1000      # 1000x acceleration for fast testing
+      interface_count: 4             # 4 interfaces with different speeds
+      interface_speeds: ["10M", "100M", "1G", "10G"]
+    
+    # Add minimal delays to see counter changes
+    delay:
+      enabled: true
+      global_delay: 10              # Small delay to see changes
+      deviation: 5
+  
+  logging:
+    enabled: true
+    level: info
+    file: "logs/counter-wrap-test.log"
+    format: json

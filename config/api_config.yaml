@@ -1,0 +1,51 @@
+# REST API Configuration for Mock SNMP Agent
+# This configuration enables the REST API for programmatic control
+
+simulation:
+  # Basic simulation behaviors
+  behaviors:
+    delay:
+      enabled: false
+      global_delay: 0
+      deviation: 0
+    
+    snmpv3_security:
+      enabled: false
+
+  # REST API Configuration
+  rest_api:
+    enabled: true
+    host: "127.0.0.1"
+    port: 8080
+    
+    # CORS configuration for web browser access
+    cors:
+      enabled: true
+      origins:
+        - "*"
+        # For production, specify exact origins:
+        # - "http://localhost:3000"
+        # - "https://monitoring.example.com"
+    
+    # Authentication (optional)
+    auth:
+      enabled: false
+      api_key: null
+      # To enable API key auth:
+      # enabled: true
+      # api_key: "your-secret-api-key"
+
+  # Logging for API operations
+  logging:
+    enabled: true
+    level: "info"
+    file: "logs/api.log"
+    format: "json"
+
+  # Metrics collection
+  metrics:
+    enabled: true
+    export:
+      format: "json"
+      interval: 30
+      file: "metrics/api_metrics.json"

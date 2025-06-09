@@ -2,5 +2,20 @@
 # Official Lextudio SNMP Simulator package
 snmpsim-lextudio>=1.1.1
 
+# Configuration file support
+pyyaml>=6.0
+
+# System monitoring for resource constraint simulation
+psutil>=5.9.0
+
+# REST API server dependencies
+fastapi>=0.100.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+
 # Optional: Additional simulation data for various device types
 # snmpsim-data>=1.0.0
+
+# Development/testing dependencies (optional)
+# requests>=2.31.0  # For API client examples
+# pytest>=7.0.0     # For running tests

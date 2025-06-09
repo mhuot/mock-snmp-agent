@@ -1,0 +1,162 @@
+# Docker Compose for Comprehensive Testing
+# Tests all advanced features: SNMPv3 security, REST API, and State Machine
+
+version: '3.8'
+
+services:
+  # Test 1: SNMPv3 Security Failures
+  snmpv3-security-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.enhanced
+    container_name: mock-snmp-snmpv3-security
+    ports:
+      - "11621:11611/udp"  # SNMP port
+      - "8081:8080"        # API port
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./test-results:/app/test-results
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      python mock_snmp_agent.py 
+      --config config/snmpv3_security_test.yaml 
+      --host 0.0.0.0 
+      --port 11611
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - snmp-test-network
+
+  # Test 2: REST API Functionality
+  rest-api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.enhanced
+    container_name: mock-snmp-rest-api
+    ports:
+      - "11622:11611/udp"
+      - "8082:8080"
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./test-results:/app/test-results
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      python mock_snmp_agent.py 
+      --config config/api_config.yaml 
+      --host 0.0.0.0 
+      --port 11611
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - snmp-test-network
+
+  # Test 3: State Machine Simulation
+  state-machine-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.enhanced
+    container_name: mock-snmp-state-machine
+    ports:
+      - "11623:11611/udp"
+      - "8083:8080"
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./test-results:/app/test-results
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      python mock_snmp_agent.py 
+      --config config/state_machine_test.yaml 
+      --host 0.0.0.0 
+      --port 11611
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - snmp-test-network
+
+  # Test 4: Combined Features Test
+  combined-features-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.enhanced
+    container_name: mock-snmp-combined
+    ports:
+      - "11624:11611/udp"
+      - "8084:8080"
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - ./test-results:/app/test-results
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      python mock_snmp_agent.py 
+      --config config/comprehensive.yaml 
+      --host 0.0.0.0 
+      --port 11611
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - snmp-test-network
+
+  # Test Runner: Automated testing container
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test-runner
+    container_name: mock-snmp-test-runner
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./examples:/app/examples:ro
+      - ./test-results:/app/test-results
+      - /var/run/docker.sock:/var/run/docker.sock  # For Docker-in-Docker testing
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - snmpv3-security-test
+      - rest-api-test
+      - state-machine-test
+      - combined-features-test
+    command: python /app/tests/docker_comprehensive_test.py
+    networks:
+      - snmp-test-network
+
+  # SNMP Client for testing
+  snmp-client:
+    image: alpine:latest
+    container_name: snmp-test-client
+    volumes:
+      - ./test-results:/test-results
+    command: >
+      sh -c "
+      apk add --no-cache net-snmp-tools python3 py3-pip curl &&
+      pip3 install requests &&
+      sleep infinity
+      "
+    networks:
+      - snmp-test-network
+
+networks:
+  snmp-test-network:
+    driver: bridge
+
+volumes:
+  test-results:
+    driver: local

@@ -1,0 +1,65 @@
+# Comprehensive Configuration - All Features Enabled
+# This configuration enables all advanced features for integration testing
+
+simulation:
+  behaviors:
+    # Basic delay behavior
+    delay:
+      enabled: true
+      global_delay: 50
+      deviation: 25
+    
+    # SNMPv3 Security Failures
+    snmpv3_security:
+      enabled: true
+      time_window_failures:
+        enabled: true
+        clock_skew_seconds: 200
+        failure_rate: 10          # 10% time window failures
+      authentication_failures:
+        enabled: true
+        wrong_credentials_rate: 15  # 15% auth failures
+        unsupported_auth_rate: 5
+        unknown_user_rate: 8
+      privacy_failures:
+        enabled: true
+        decryption_error_rate: 5   # 5% privacy failures
+        unsupported_privacy_rate: 2
+      engine_discovery_failures:
+        enabled: true
+        wrong_engine_id_rate: 8    # 8% engine failures
+        boot_counter_issues_rate: 3
+
+  # State Machine Configuration
+  state_machine:
+    enabled: true
+    device_type: "router"
+    initial_state: "booting"
+    auto_transitions: true
+    transition_delays:
+      min: 10
+      max: 60
+
+  # REST API Configuration
+  rest_api:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8080
+    cors:
+      enabled: true
+      origins: ["*"]
+
+  # Comprehensive Logging
+  logging:
+    enabled: true
+    level: "info"
+    file: "logs/comprehensive.log"
+    format: "json"
+
+  # Metrics Collection
+  metrics:
+    enabled: true
+    export:
+      format: "json"
+      interval: 30
+      file: "metrics/comprehensive_metrics.json"
