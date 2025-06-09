@@ -6,16 +6,15 @@ This module provides endpoints for creating, managing, and executing
 test scenarios for SNMP simulation.
 """
 
-import uuid
-import time
-import json
 import asyncio
-from typing import List, Dict, Any, Optional
-from datetime import datetime
-from pathlib import Path
+import json
+import time
+import uuid
 from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from fastapi import HTTPException, BackgroundTasks
+from fastapi import BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field
 
 
@@ -150,7 +149,7 @@ class SimulationScenarioManager:
         scenarios_file = self.data_dir / "scenarios.json"
         if scenarios_file.exists():
             try:
-                with open(scenarios_file, "r") as f:
+                with open(scenarios_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     for scenario_data in data:
                         scenario = TestScenario(**scenario_data)
@@ -163,7 +162,7 @@ class SimulationScenarioManager:
         scenarios_file = self.data_dir / "scenarios.json"
         try:
             data = [scenario.dict() for scenario in self.scenarios.values()]
-            with open(scenarios_file, "w") as f:
+            with open(scenarios_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
         except Exception:
             pass
@@ -298,7 +297,7 @@ class SimulationScenarioManager:
         """
         if scenario_id not in self.scenarios:
             # Try by name
-            for sid, scenario in self.scenarios.items():
+            for scenario in self.scenarios.values():
                 if scenario.name == scenario_id:
                     return scenario
             raise ValueError(f"Scenario not found: {scenario_id}")

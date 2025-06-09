@@ -2,7 +2,20 @@
 
 ## Overview
 
-The Mock SNMP Agent provides a comprehensive REST API for controlling and monitoring the agent, managing test scenarios, and accessing real-time data through WebSocket connections.
+The Mock SNMP Agent provides a comprehensive REST API for controlling and monitoring the agent, managing test scenarios, and accessing real-time data through WebSocket connections. This API enables programmatic control for automated testing, CI/CD integration, and monitoring applications.
+
+## Quick Start
+
+```bash
+# Start agent with API enabled
+python mock_snmp_agent.py --rest-api --api-port 8080 --port 11611
+
+# Test basic connectivity
+curl http://localhost:8080/health
+
+# Get current metrics
+curl http://localhost:8080/metrics
+```
 
 ## Base URL
 
@@ -12,7 +25,32 @@ http://localhost:8080
 
 ## Authentication
 
-Currently, the API does not require authentication. In production deployments, consider adding authentication middleware.
+Currently, the API does not require authentication. In production deployments, consider adding authentication middleware such as API keys or JWT tokens.
+
+## Error Handling
+
+All API responses follow a consistent error format:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid parameter value",
+    "details": {
+      "field": "delay",
+      "value": "invalid",
+      "expected": "number"
+    }
+  }
+}
+```
+
+Common HTTP status codes:
+- `200`: Success
+- `400`: Bad Request (invalid parameters)
+- `404`: Not Found (resource doesn't exist)
+- `422`: Unprocessable Entity (validation failed)
+- `500`: Internal Server Error
 
 ## Core Endpoints
 
@@ -31,8 +69,30 @@ Returns the current health status of the agent.
   "timestamp": 1640995200.0,
   "uptime_seconds": 3600.0,
   "version": "1.0.0",
-  "snmp_endpoint": "127.0.0.1:11611"
+  "snmp_endpoint": "127.0.0.1:11611",
+  "api_version": "v1",
+  "features": {
+    "websockets": true,
+    "simulation_behaviors": ["delay", "drops", "counter_wrap"],
+    "supported_snmp_versions": ["v1", "v2c", "v3"]
+  }
 }
+```
+
+**Status Codes:**
+- `200`: Agent is healthy and operational
+- `503`: Agent is starting up or experiencing issues
+
+**Example Usage:**
+```python
+import requests
+
+response = requests.get('http://localhost:8080/health')
+if response.status_code == 200:
+    data = response.json()
+    print(f"Agent uptime: {data['uptime_seconds']} seconds")
+else:
+    print("Agent not healthy")
 ```
 
 ### Metrics

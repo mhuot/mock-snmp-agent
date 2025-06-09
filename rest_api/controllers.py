@@ -5,13 +5,14 @@ REST API Controllers
 This module provides the business logic for the REST API endpoints.
 """
 
-import os
-import time
-import psutil
-import subprocess
 import logging
-from typing import Dict, Any, Optional, List
+import os
+import subprocess
+import time
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import psutil
 
 from .models import (
     HealthStatus,
@@ -295,7 +296,7 @@ class MockSNMPAgentController:
                 data_sources.append(snmprec_file.name)
 
                 try:
-                    with open(snmprec_file, "r") as f:
+                    with open(snmprec_file, "r", encoding="utf-8") as f:
                         for line in f:
                             line = line.strip()
                             if line and not line.startswith("#"):
@@ -368,8 +369,7 @@ class MockSNMPAgentController:
 
         if oid in oid_values:
             return oid_values[oid]
-        else:
-            raise ValueError(f"OID not found: {oid}")
+        raise ValueError(f"OID not found: {oid}")
 
     def search_oids(
         self, pattern: str, mib: Optional[str] = None, limit: int = 50

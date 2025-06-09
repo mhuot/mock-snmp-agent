@@ -114,8 +114,13 @@ def run_with_restart(cmd, env, restart_interval, quiet=False):
             print("\nStopping Mock SNMP Agent...")
         return 0
 
-    except Exception as e:
-        print(f"Error in restart handler: {e}")
+    except (KeyboardInterrupt, SystemExit):
+        print("Shutdown signal received")
+        if process and process.poll() is None:
+            process.terminate()
+        return 0
+    except (subprocess.SubprocessError, OSError) as e:
+        print(f"Process error in restart handler: {e}")
         if process and process.poll() is None:
             process.kill()
         return 1
@@ -258,8 +263,11 @@ For advanced usage, use snmpsim-command-responder directly.
         try:
             config = SimulationConfig(args.config)
             print(f"Loaded configuration from: {args.config}")
-        except Exception as e:
-            print(f"Error loading configuration: {e}")
+        except (FileNotFoundError, IOError) as e:
+            print(f"Configuration file error: {e}")
+            return 1
+        except (yaml.YAMLError, ValueError) as e:
+            print(f"Configuration parsing error: {e}")
             return 1
     elif any(
         [

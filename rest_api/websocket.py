@@ -7,17 +7,14 @@ from the Mock SNMP Agent to connected clients.
 """
 
 import asyncio
-import json
 import logging
 import time
-from typing import Set, Dict, Any, Optional
-from datetime import datetime
 from collections import deque
+from datetime import datetime
+from typing import Any, Dict, Optional, Set
 
 from fastapi import WebSocket, WebSocketDisconnect
 from fastapi.websockets import WebSocketState
-
-from .models import MetricsResponse
 
 
 class ConnectionManager:
@@ -52,7 +49,7 @@ class ConnectionManager:
 
         if channel and channel in self.channel_connections:
             self.channel_connections[channel].add(websocket)
-            self.logger.info(f"WebSocket connected to channel: {channel}")
+            self.logger.info("WebSocket connected to channel: %s", channel)
 
             # Send recent data from buffer
             await self._send_buffer_data(websocket, channel)
@@ -95,7 +92,7 @@ class ConnectionManager:
                 try:
                     await websocket.send_json(item)
                 except Exception as e:
-                    self.logger.error(f"Error sending buffer data: {e}")
+                    self.logger.error("Error sending buffer data: %s", str(e))
                     break
 
     async def broadcast_to_channel(self, channel: str, message: Dict[str, Any]):
@@ -129,7 +126,7 @@ class ConnectionManager:
                 else:
                     disconnected.add(connection)
             except Exception as e:
-                self.logger.error(f"Error broadcasting to WebSocket: {e}")
+                self.logger.error("Error broadcasting to WebSocket: %s", str(e))
                 disconnected.add(connection)
 
         # Clean up disconnected clients
@@ -274,7 +271,7 @@ def setup_websocket_routes(app):
         try:
             while True:
                 # Keep connection alive and handle incoming messages
-                data = await websocket.receive_text()
+                await websocket.receive_text()
                 # Could handle client commands here if needed
         except WebSocketDisconnect:
             manager.disconnect(websocket)
@@ -285,7 +282,7 @@ def setup_websocket_routes(app):
         await manager.connect(websocket, "logs")
         try:
             while True:
-                data = await websocket.receive_text()
+                await websocket.receive_text()
         except WebSocketDisconnect:
             manager.disconnect(websocket)
 
@@ -295,7 +292,7 @@ def setup_websocket_routes(app):
         await manager.connect(websocket, "state")
         try:
             while True:
-                data = await websocket.receive_text()
+                await websocket.receive_text()
         except WebSocketDisconnect:
             manager.disconnect(websocket)
 
@@ -305,7 +302,7 @@ def setup_websocket_routes(app):
         await manager.connect(websocket, "snmp_activity")
         try:
             while True:
-                data = await websocket.receive_text()
+                await websocket.receive_text()
         except WebSocketDisconnect:
             manager.disconnect(websocket)
 
@@ -361,6 +358,6 @@ class MetricsCollector:
                 await manager.broadcast_metrics(metrics.dict())
 
             except Exception as e:
-                self.logger.error(f"Error collecting metrics: {e}")
+                self.logger.error("Error collecting metrics: %s", str(e))
 
             await asyncio.sleep(self.interval_seconds)

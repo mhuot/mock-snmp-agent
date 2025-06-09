@@ -6,17 +6,16 @@ This module provides functionality for exporting and importing
 configurations, metrics, and test data.
 """
 
-import io
 import csv
+import io
 import json
 import time
 import zipfile
-from typing import List, Dict, Any, Optional
 from datetime import datetime
-from pathlib import Path
+from typing import Any, Dict, List
 
-from fastapi import UploadFile, File, Query, HTTPException
-from fastapi.responses import StreamingResponse, FileResponse
+from fastapi import File, HTTPException, Query, UploadFile
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 
@@ -380,7 +379,7 @@ def setup_export_import_endpoints(app, controller, scenario_manager, history_man
                 },
             )
 
-        elif request.format == "csv":
+        if request.format == "csv":
             csv_data = exporter.export_csv(request)
             return StreamingResponse(
                 csv_data,
@@ -390,7 +389,7 @@ def setup_export_import_endpoints(app, controller, scenario_manager, history_man
                 },
             )
 
-        elif request.format == "yaml":
+        if request.format == "yaml":
             yaml_data = exporter.export_yaml(request)
             return StreamingResponse(
                 io.StringIO(yaml_data),
@@ -400,8 +399,7 @@ def setup_export_import_endpoints(app, controller, scenario_manager, history_man
                 },
             )
 
-        else:
-            raise HTTPException(status_code=400, detail="Unsupported format")
+        raise HTTPException(status_code=400, detail="Unsupported format")
 
     @app.get("/export/archive", tags=["Export/Import"])
     async def export_archive(

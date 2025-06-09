@@ -117,7 +117,7 @@ class SNMPAgentAPIServer:
             try:
                 return self.controller.get_health()
             except Exception as e:
-                self.logger.error(f"Health check failed: {e}")
+                self.logger.error("Health check failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.get("/metrics", response_model=MetricsResponse, tags=["Monitoring"])
@@ -126,7 +126,7 @@ class SNMPAgentAPIServer:
             try:
                 return self.controller.get_metrics()
             except Exception as e:
-                self.logger.error(f"Metrics collection failed: {e}")
+                self.logger.error("Metrics collection failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.get(
@@ -137,7 +137,7 @@ class SNMPAgentAPIServer:
             try:
                 return self.controller.get_configuration()
             except Exception as e:
-                self.logger.error(f"Configuration retrieval failed: {e}")
+                self.logger.error("Configuration retrieval failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.put(
@@ -152,7 +152,7 @@ class SNMPAgentAPIServer:
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=str(e))
             except Exception as e:
-                self.logger.error(f"Configuration update failed: {e}")
+                self.logger.error("Configuration update failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.get(
@@ -163,7 +163,7 @@ class SNMPAgentAPIServer:
             try:
                 return self.controller.get_agent_status()
             except Exception as e:
-                self.logger.error(f"Status retrieval failed: {e}")
+                self.logger.error("Status retrieval failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.post("/agent/restart", response_model=RestartResponse, tags=["Agent"])
@@ -175,7 +175,7 @@ class SNMPAgentAPIServer:
                     timeout_seconds=restart_request.timeout_seconds,
                 )
             except Exception as e:
-                self.logger.error(f"Agent restart failed: {e}")
+                self.logger.error("Agent restart failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.get("/oids/available", response_model=OIDListResponse, tags=["OIDs"])
@@ -184,7 +184,7 @@ class SNMPAgentAPIServer:
             try:
                 return self.controller.get_available_oids()
             except Exception as e:
-                self.logger.error(f"OID list retrieval failed: {e}")
+                self.logger.error("OID list retrieval failed: %s", str(e))
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.get("/", tags=["Info"])
@@ -219,7 +219,7 @@ class SNMPAgentAPIServer:
 
         @self.app.exception_handler(Exception)
         async def general_exception_handler(request, exc):
-            self.logger.error(f"Unhandled exception: {exc}")
+            self.logger.error("Unhandled exception: %s", str(exc))
             return JSONResponse(
                 status_code=500,
                 content=ErrorResponse(
@@ -266,7 +266,7 @@ class SNMPAgentAPIServer:
                 import uvicorn
 
                 self.logger.info(
-                    f"Starting API server on {self.api_host}:{self.api_port}"
+                    "Starting API server on %s:%s", self.api_host, self.api_port
                 )
 
                 # Create event loop for async operations
@@ -285,7 +285,7 @@ class SNMPAgentAPIServer:
                     loop="asyncio",
                 )
             except Exception as e:
-                self.logger.error(f"API server failed to start: {e}")
+                self.logger.error("API server failed to start: %s", str(e))
 
         self.server_thread = threading.Thread(target=run_server, daemon=True)
         self.server_thread.start()
