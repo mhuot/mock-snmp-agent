@@ -4,7 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SNMP Simulator (snmpsim) is a pure-Python tool that simulates SNMP agents. It can act as multiple virtual SNMP-enabled devices, responding to SNMP queries based on recorded data, MIB files, or dynamic variation modules.
+Mock SNMP Agent is a comprehensive SNMP simulator built on snmpsim-lextudio, featuring advanced simulation behaviors and a REST API with real-time monitoring capabilities. It can act as multiple virtual SNMP-enabled devices with configurable behaviors for comprehensive testing of SNMP monitoring systems.
+
+### Key Features
+- **REST API**: FastAPI-based HTTP API for remote control and monitoring
+- **WebSocket Support**: Real-time streaming of metrics, logs, and SNMP activity
+- **Advanced Simulation**: Delay, packet loss, counter wrap, and resource constraint simulation
+- **Test Scenarios**: Create and execute complex testing scenarios
+- **Export/Import**: Configuration and data exchange in multiple formats
+- **Comprehensive Testing**: 78+ automated API tests with CI/CD integration
 
 ## Common Development Commands
 
@@ -24,51 +32,86 @@ venv\Scripts\activate  # On Windows
 # Install in development mode (after activating venv)
 pip install -e .
 
-# Install all dependencies for development
-pip install -r requirements.txt -r devel-requirements.txt
+# Install core dependencies
+pip install -r requirements.txt
+
+# Install testing dependencies
+pip install -r requirements-test.txt
+
+# Install with API support
+pip install fastapi uvicorn websockets pyyaml
 ```
 
 ### Running the Simulator
 ```bash
-# Start the full-featured SNMP simulator
-snmpsim-command-responder --data-dir=./data --agent-udpv4-endpoint=127.0.0.1:1024
+# Start basic SNMP simulator
+python mock_snmp_agent.py --port 11611
 
-# Start the lightweight simulator
-snmpsim-command-responder-lite --data-dir=./data --agent-udpv4-endpoint=127.0.0.1:1163
+# Start with REST API
+python mock_snmp_agent.py --rest-api --api-port 8080 --port 11611
+
+# Start with configuration file
+python mock_snmp_agent.py --config config/comprehensive.yaml --port 11611
+
+# Start REST API server separately
+python -m rest_api.server --port 8080
 ```
 
 ### Testing
 ```bash
-# Run the complete test suite
-bash runtests.sh
+# Run complete API test suite
+python run_api_tests.py all
+
+# Run specific test categories
+python run_api_tests.py endpoints
+python run_api_tests.py websockets
+python run_api_tests.py scenarios
+python run_api_tests.py export
+
+# Run with coverage and verbose output
+python run_api_tests.py all --coverage --verbose
+
+# Run legacy tests
+pytest tests/ -v
+python test_prd_requirements.py
+python performance_test.py
 ```
 
-### Linting
+### Linting and Code Quality
 ```bash
 # Run pylint on the codebase
-pylint snmpsim
+pylint mock_snmp_agent.py rest_api/
+
+# Format code with black
+black .
+
+# Run security checks
+bandit -r rest_api/
+safety check
 ```
 
 ## High-Level Architecture
 
-### Core Command Entry Points
-- `snmpsim/commands/responder.py` - Main SNMP simulator with full features
-- `snmpsim/commands/responder_lite.py` - Lightweight simulator for high-scale deployments
-- `snmpsim/commands/cmd2rec.py` - Records SNMP interactions to .snmprec files
-- `snmpsim/commands/mib2rec.py` - Converts MIB files to simulation data
-- `snmpsim/commands/pcap2rec.py` - Extracts SNMP data from packet captures
+### Core Components
+- **`mock_snmp_agent.py`** - Enhanced main module with CLI options and configuration management
+- **`rest_api/server.py`** - FastAPI application server for HTTP/WebSocket API
+- **`rest_api/controllers.py`** - Business logic for agent control and monitoring
+- **`rest_api/websocket.py`** - Real-time WebSocket communication manager
+- **`rest_api/models.py`** - Pydantic data models for API validation
 
-### Key Components
-- **Controller** (`controller.py`) - Central MIB instrumentation controller that manages SNMP object access
-- **Data Management** (`datafile.py`) - Handles loading and indexing of simulation data files
-- **Grammar Modules** (`grammar/`) - Parsers for different data formats (snmprec, walk, sap, mvc)
-- **Variation Modules** (`variation.py` + `/variation/`) - Plugin system for dynamic SNMP responses
+### REST API Architecture
+- **WebSocket Manager**: Handles real-time connections for metrics, logs, and SNMP activity
+- **Query Endpoints**: Advanced OID querying with metadata and history tracking
+- **Simulation Control**: Test scenario creation, execution, and analysis
+- **Export/Import**: Multi-format data exchange (JSON, CSV, YAML, ZIP)
+- **Agent Control**: Remote agent management and configuration
 
 ### Data Flow
-1. SNMP requests arrive at network endpoints (`endpoints.py`)
-2. Controller routes requests to appropriate data files based on community/context
-3. Data files provide static responses or invoke variation modules for dynamic behavior
-4. Responses are formatted and sent back via pysnmp
+1. SNMP requests arrive at the simulator endpoint
+2. Requests are processed through configured simulation behaviors
+3. WebSocket manager broadcasts real-time activity to connected clients
+4. Metrics are collected and stored for historical analysis
+5. API endpoints provide access to current state and historical data
 
 ### Simulation Data Format (.snmprec)
 ```
@@ -85,8 +128,33 @@ Variation modules in `/variation/` implement dynamic behavior by providing:
 
 ## Key Development Patterns
 
-1. **Multi-Protocol Support**: Code must handle SNMPv1, v2c, and v3 with various security models
-2. **Data Source Abstraction**: All data sources (files, databases, etc.) implement common interfaces
-3. **Plugin Architecture**: New functionality should be added as variation modules when possible
-4. **Performance Considerations**: The simulator may handle thousands of virtual agents - avoid blocking operations
-5. **Python Compatibility**: Maintain compatibility with Python 2.7 and 3.x
+1. **Async/Await**: All REST API endpoints and WebSocket handlers use async patterns
+2. **Pydantic Models**: Use Pydantic for all API request/response validation
+3. **FastAPI Patterns**: Follow FastAPI best practices for dependency injection and error handling
+4. **WebSocket Management**: Centralized connection management with channel-based broadcasting
+5. **Test-Driven Development**: Comprehensive test coverage with pytest and automated CI/CD
+6. **Configuration-Driven**: YAML/JSON configuration for simulation behaviors and test scenarios
+7. **Real-time Monitoring**: WebSocket streaming for live metrics and activity monitoring
+8. **Multi-format Support**: Export/import in JSON, CSV, YAML, and ZIP formats
+
+## API Development Workflow
+
+### Adding New API Endpoints
+1. **Define Pydantic models** in `rest_api/models.py`
+2. **Implement business logic** in `rest_api/controllers.py`
+3. **Add FastAPI routes** in appropriate endpoint modules
+4. **Write comprehensive tests** in `tests/test_*.py`
+5. **Update API documentation** in `REST_API_DOCUMENTATION.md`
+6. **Run test suite** with `python run_api_tests.py all`
+
+### WebSocket Development
+1. **Add channel support** in `rest_api/websocket.py`
+2. **Implement message broadcasting** in controllers
+3. **Create WebSocket tests** in `tests/test_websocket_integration.py`
+4. **Test real-time functionality** with integration tests
+
+### Simulation Behavior Development
+1. **Define behavior configuration** in YAML schema
+2. **Implement behavior logic** in `behaviors/` directory
+3. **Add scenario tests** in `tests/test_simulation_scenarios.py`
+4. **Validate with test execution** using API endpoints

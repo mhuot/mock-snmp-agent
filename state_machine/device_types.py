@@ -12,7 +12,7 @@ from .core import StateDefinition, DeviceStateMachine
 
 def create_router_states() -> List[StateDefinition]:
     """Create state definitions for a network router.
-    
+
     Returns:
         List of router state definitions
     """
@@ -29,7 +29,7 @@ def create_router_states() -> List[StateDefinition]:
             oid_overrides={
                 "1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Booting",  # sysDescr
                 "1.3.6.1.2.1.1.3.0": "67:0",  # sysUpTime (0 during boot)
-            }
+            },
         ),
         StateDefinition(
             name="operational",
@@ -43,11 +43,9 @@ def create_router_states() -> List[StateDefinition]:
                 "maintenance": 0.1,
                 "degraded": 0.15,
                 "overloaded": 0.05,
-                "rebooting": 0.02
+                "rebooting": 0.02,
             },
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Operational"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Operational"},
         ),
         StateDefinition(
             name="degraded",
@@ -57,10 +55,14 @@ def create_router_states() -> List[StateDefinition]:
             response_delay_ms=150,
             error_rate=10.0,
             next_states=["operational", "failed", "rebooting"],
-            transition_probabilities={"operational": 0.7, "failed": 0.2, "rebooting": 0.1},
+            transition_probabilities={
+                "operational": 0.7,
+                "failed": 0.2,
+                "rebooting": 0.1,
+            },
             oid_overrides={
                 "1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Performance Degraded"
-            }
+            },
         ),
         StateDefinition(
             name="overloaded",
@@ -70,10 +72,12 @@ def create_router_states() -> List[StateDefinition]:
             response_delay_ms=300,
             error_rate=20.0,
             next_states=["operational", "degraded", "failed"],
-            transition_probabilities={"operational": 0.4, "degraded": 0.4, "failed": 0.2},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Overloaded"
-            }
+            transition_probabilities={
+                "operational": 0.4,
+                "degraded": 0.4,
+                "failed": 0.2,
+            },
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Overloaded"},
         ),
         StateDefinition(
             name="maintenance",
@@ -84,9 +88,7 @@ def create_router_states() -> List[StateDefinition]:
             error_rate=5.0,
             next_states=["operational", "rebooting"],
             transition_probabilities={"operational": 0.8, "rebooting": 0.2},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Maintenance Mode"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Maintenance Mode"},
         ),
         StateDefinition(
             name="failed",
@@ -97,7 +99,7 @@ def create_router_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["rebooting"],
             transition_probabilities={},
-            oid_overrides={}
+            oid_overrides={},
         ),
         StateDefinition(
             name="boot_failure",
@@ -108,9 +110,7 @@ def create_router_states() -> List[StateDefinition]:
             error_rate=90.0,
             next_states=["rebooting", "failed"],
             transition_probabilities={"rebooting": 0.7, "failed": 0.3},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Boot Failure"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Cisco IOS Router - Boot Failure"},
         ),
         StateDefinition(
             name="rebooting",
@@ -121,14 +121,14 @@ def create_router_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["booting"],
             transition_probabilities={"booting": 1.0},
-            oid_overrides={}
-        )
+            oid_overrides={},
+        ),
     ]
 
 
 def create_switch_states() -> List[StateDefinition]:
     """Create state definitions for a network switch.
-    
+
     Returns:
         List of switch state definitions
     """
@@ -142,9 +142,7 @@ def create_switch_states() -> List[StateDefinition]:
             error_rate=20.0,
             next_states=["operational", "boot_failure"],
             transition_probabilities={"operational": 0.95, "boot_failure": 0.05},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Catalyst Switch - Booting"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Catalyst Switch - Booting"},
         ),
         StateDefinition(
             name="operational",
@@ -157,11 +155,9 @@ def create_switch_states() -> List[StateDefinition]:
             transition_probabilities={
                 "spanning_tree_convergence": 0.1,
                 "port_flapping": 0.05,
-                "rebooting": 0.01
+                "rebooting": 0.01,
             },
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Catalyst Switch - Operational"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Catalyst Switch - Operational"},
         ),
         StateDefinition(
             name="spanning_tree_convergence",
@@ -172,9 +168,7 @@ def create_switch_states() -> List[StateDefinition]:
             error_rate=8.0,
             next_states=["operational"],
             transition_probabilities={"operational": 1.0},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Catalyst Switch - STP Convergence"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Catalyst Switch - STP Convergence"},
         ),
         StateDefinition(
             name="port_flapping",
@@ -185,9 +179,7 @@ def create_switch_states() -> List[StateDefinition]:
             error_rate=3.0,
             next_states=["operational", "failed"],
             transition_probabilities={"operational": 0.9, "failed": 0.1},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Catalyst Switch - Port Flapping"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Catalyst Switch - Port Flapping"},
         ),
         StateDefinition(
             name="failed",
@@ -198,7 +190,7 @@ def create_switch_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["rebooting"],
             transition_probabilities={},
-            oid_overrides={}
+            oid_overrides={},
         ),
         StateDefinition(
             name="boot_failure",
@@ -209,7 +201,7 @@ def create_switch_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["rebooting", "failed"],
             transition_probabilities={"rebooting": 0.8, "failed": 0.2},
-            oid_overrides={}
+            oid_overrides={},
         ),
         StateDefinition(
             name="rebooting",
@@ -220,14 +212,14 @@ def create_switch_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["booting"],
             transition_probabilities={"booting": 1.0},
-            oid_overrides={}
-        )
+            oid_overrides={},
+        ),
     ]
 
 
 def create_server_states() -> List[StateDefinition]:
     """Create state definitions for a server.
-    
+
     Returns:
         List of server state definitions
     """
@@ -241,9 +233,7 @@ def create_server_states() -> List[StateDefinition]:
             error_rate=30.0,
             next_states=["operational", "boot_failure"],
             transition_probabilities={"operational": 0.92, "boot_failure": 0.08},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Linux Server - Booting"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Linux Server - Booting"},
         ),
         StateDefinition(
             name="operational",
@@ -257,11 +247,9 @@ def create_server_states() -> List[StateDefinition]:
                 "high_load": 0.2,
                 "maintenance": 0.05,
                 "backup_running": 0.1,
-                "rebooting": 0.005
+                "rebooting": 0.005,
             },
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Linux Server - Operational"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Linux Server - Operational"},
         ),
         StateDefinition(
             name="high_load",
@@ -271,10 +259,12 @@ def create_server_states() -> List[StateDefinition]:
             response_delay_ms=200,
             error_rate=8.0,
             next_states=["operational", "overloaded", "maintenance"],
-            transition_probabilities={"operational": 0.7, "overloaded": 0.2, "maintenance": 0.1},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Linux Server - High Load"
-            }
+            transition_probabilities={
+                "operational": 0.7,
+                "overloaded": 0.2,
+                "maintenance": 0.1,
+            },
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Linux Server - High Load"},
         ),
         StateDefinition(
             name="overloaded",
@@ -284,10 +274,12 @@ def create_server_states() -> List[StateDefinition]:
             response_delay_ms=500,
             error_rate=25.0,
             next_states=["operational", "failed", "rebooting"],
-            transition_probabilities={"operational": 0.5, "failed": 0.3, "rebooting": 0.2},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Linux Server - Overloaded"
-            }
+            transition_probabilities={
+                "operational": 0.5,
+                "failed": 0.3,
+                "rebooting": 0.2,
+            },
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Linux Server - Overloaded"},
         ),
         StateDefinition(
             name="backup_running",
@@ -298,9 +290,7 @@ def create_server_states() -> List[StateDefinition]:
             error_rate=2.0,
             next_states=["operational"],
             transition_probabilities={"operational": 1.0},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Linux Server - Backup Running"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Linux Server - Backup Running"},
         ),
         StateDefinition(
             name="maintenance",
@@ -311,9 +301,7 @@ def create_server_states() -> List[StateDefinition]:
             error_rate=3.0,
             next_states=["operational", "rebooting"],
             transition_probabilities={"operational": 0.8, "rebooting": 0.2},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "Linux Server - Maintenance"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "Linux Server - Maintenance"},
         ),
         StateDefinition(
             name="failed",
@@ -324,7 +312,7 @@ def create_server_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["rebooting"],
             transition_probabilities={},
-            oid_overrides={}
+            oid_overrides={},
         ),
         StateDefinition(
             name="boot_failure",
@@ -335,7 +323,7 @@ def create_server_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["rebooting", "failed"],
             transition_probabilities={"rebooting": 0.6, "failed": 0.4},
-            oid_overrides={}
+            oid_overrides={},
         ),
         StateDefinition(
             name="rebooting",
@@ -346,14 +334,14 @@ def create_server_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["booting"],
             transition_probabilities={"booting": 1.0},
-            oid_overrides={}
-        )
+            oid_overrides={},
+        ),
     ]
 
 
 def create_printer_states() -> List[StateDefinition]:
     """Create state definitions for a network printer.
-    
+
     Returns:
         List of printer state definitions
     """
@@ -370,11 +358,9 @@ def create_printer_states() -> List[StateDefinition]:
                 "printing": 0.6,
                 "paper_jam": 0.05,
                 "low_toner": 0.1,
-                "offline": 0.02
+                "offline": 0.02,
             },
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "HP LaserJet - Ready"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "HP LaserJet - Ready"},
         ),
         StateDefinition(
             name="printing",
@@ -384,10 +370,12 @@ def create_printer_states() -> List[StateDefinition]:
             response_delay_ms=75,
             error_rate=2.0,
             next_states=["ready", "paper_jam", "out_of_paper"],
-            transition_probabilities={"ready": 0.9, "paper_jam": 0.05, "out_of_paper": 0.05},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "HP LaserJet - Printing"
-            }
+            transition_probabilities={
+                "ready": 0.9,
+                "paper_jam": 0.05,
+                "out_of_paper": 0.05,
+            },
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "HP LaserJet - Printing"},
         ),
         StateDefinition(
             name="paper_jam",
@@ -398,9 +386,7 @@ def create_printer_states() -> List[StateDefinition]:
             error_rate=0.0,
             next_states=["ready"],
             transition_probabilities={},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "HP LaserJet - Paper Jam"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "HP LaserJet - Paper Jam"},
         ),
         StateDefinition(
             name="out_of_paper",
@@ -411,9 +397,7 @@ def create_printer_states() -> List[StateDefinition]:
             error_rate=0.0,
             next_states=["ready"],
             transition_probabilities={},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "HP LaserJet - Out of Paper"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "HP LaserJet - Out of Paper"},
         ),
         StateDefinition(
             name="low_toner",
@@ -424,9 +408,7 @@ def create_printer_states() -> List[StateDefinition]:
             error_rate=1.0,
             next_states=["ready", "out_of_toner"],
             transition_probabilities={"ready": 0.7, "out_of_toner": 0.3},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "HP LaserJet - Low Toner"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "HP LaserJet - Low Toner"},
         ),
         StateDefinition(
             name="out_of_toner",
@@ -437,9 +419,7 @@ def create_printer_states() -> List[StateDefinition]:
             error_rate=0.0,
             next_states=["ready"],
             transition_probabilities={},
-            oid_overrides={
-                "1.3.6.1.2.1.1.1.0": "HP LaserJet - Out of Toner"
-            }
+            oid_overrides={"1.3.6.1.2.1.1.1.0": "HP LaserJet - Out of Toner"},
         ),
         StateDefinition(
             name="offline",
@@ -450,59 +430,68 @@ def create_printer_states() -> List[StateDefinition]:
             error_rate=100.0,
             next_states=["ready"],
             transition_probabilities={"ready": 1.0},
-            oid_overrides={}
-        )
+            oid_overrides={},
+        ),
     ]
 
 
-def create_device_state_machine(device_type: str, initial_state: str = None) -> DeviceStateMachine:
+def create_device_state_machine(
+    device_type: str, initial_state: str = None
+) -> DeviceStateMachine:
     """Create a preconfigured state machine for a device type.
-    
+
     Args:
         device_type: Type of device (router, switch, server, printer)
         initial_state: Initial state (defaults to appropriate state for device type)
-        
+
     Returns:
         Configured DeviceStateMachine instance
-        
+
     Raises:
         ValueError: If device_type is not supported
     """
     device_type = device_type.lower()
-    
+
     # Define state generators and default initial states
     state_generators = {
         "router": (create_router_states, "booting"),
         "switch": (create_switch_states, "booting"),
         "server": (create_server_states, "booting"),
         "printer": (create_printer_states, "ready"),
-        "generic": (lambda: [], "operational")  # Generic device with no predefined states
+        "generic": (
+            lambda: [],
+            "operational",
+        ),  # Generic device with no predefined states
     }
-    
+
     if device_type not in state_generators:
-        raise ValueError(f"Unsupported device type: {device_type}. "
-                        f"Supported types: {', '.join(state_generators.keys())}")
-    
+        raise ValueError(
+            f"Unsupported device type: {device_type}. "
+            f"Supported types: {', '.join(state_generators.keys())}"
+        )
+
     state_generator, default_initial_state = state_generators[device_type]
-    
+
     # Use provided initial state or default
     if initial_state is None:
         initial_state = default_initial_state
-    
+
     # Create state machine
-    state_machine = DeviceStateMachine(device_type=device_type, initial_state=initial_state)
-    
+    state_machine = DeviceStateMachine(
+        device_type=device_type, initial_state=initial_state
+    )
+
     # Add states for non-generic devices
     if device_type != "generic":
         for state in state_generator():
             state_machine.add_state(state)
-    
+
     return state_machine
 
 
 def get_supported_device_types() -> List[str]:
     """Get list of supported device types.
-    
+
     Returns:
         List of supported device type names
     """
@@ -511,7 +500,7 @@ def get_supported_device_types() -> List[str]:
 
 def get_device_type_info() -> Dict[str, Dict[str, str]]:
     """Get information about supported device types.
-    
+
     Returns:
         Dictionary with device type information
     """
@@ -519,26 +508,26 @@ def get_device_type_info() -> Dict[str, Dict[str, str]]:
         "router": {
             "description": "Network router with routing and interface states",
             "default_initial_state": "booting",
-            "typical_states": "booting, operational, degraded, overloaded, maintenance, failed, rebooting"
+            "typical_states": "booting, operational, degraded, overloaded, maintenance, failed, rebooting",
         },
         "switch": {
-            "description": "Network switch with layer 2 switching states", 
+            "description": "Network switch with layer 2 switching states",
             "default_initial_state": "booting",
-            "typical_states": "booting, operational, spanning_tree_convergence, port_flapping, failed, rebooting"
+            "typical_states": "booting, operational, spanning_tree_convergence, port_flapping, failed, rebooting",
         },
         "server": {
             "description": "Server with load and maintenance states",
-            "default_initial_state": "booting", 
-            "typical_states": "booting, operational, high_load, overloaded, backup_running, maintenance, failed, rebooting"
+            "default_initial_state": "booting",
+            "typical_states": "booting, operational, high_load, overloaded, backup_running, maintenance, failed, rebooting",
         },
         "printer": {
             "description": "Network printer with consumables and jam states",
             "default_initial_state": "ready",
-            "typical_states": "ready, printing, paper_jam, out_of_paper, low_toner, out_of_toner, offline"
+            "typical_states": "ready, printing, paper_jam, out_of_paper, low_toner, out_of_toner, offline",
         },
         "generic": {
             "description": "Generic device with customizable states",
             "default_initial_state": "operational",
-            "typical_states": "user-defined"
-        }
+            "typical_states": "user-defined",
+        },
     }

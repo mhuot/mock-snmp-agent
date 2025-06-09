@@ -1,0 +1,41 @@
+# Testing Dependencies for Mock SNMP Agent API
+
+# Core testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-html>=3.2.0
+pytest-xdist>=3.3.0
+
+# Web testing
+httpx>=0.24.0
+websockets>=11.0.0
+requests>=2.31.0
+
+# Mocking and fixtures
+pytest-mock>=3.11.0
+responses>=0.23.0
+
+# API testing specific
+fastapi[all]>=0.100.0
+uvicorn[standard]>=0.22.0
+python-multipart>=0.0.5
+
+# File format testing
+pyyaml>=6.0
+openpyxl>=3.1.0  # For Excel export testing (future)
+
+# Performance testing
+pytest-benchmark>=4.0.0
+
+# Test data generation
+factory-boy>=3.3.0
+faker>=19.0.0
+
+# Code quality
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Documentation testing
+# pytest-doctest>=1.0.0  # Not needed - pytest has built-in doctest support

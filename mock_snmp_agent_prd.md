@@ -11,7 +11,7 @@ The Mock SNMP Agent is a tool designed to simulate the behavior of a real SNMP a
 ## Functional Requirements
 1. SNMP Support
    - Implement SNMP v1, v2c, and v3 protocol support
-   - Respond to SNMP GET, GETNEXT, GETBULK, and SET requests
+   - Respond to SNMP GET, GETNEXT, and GETBULK requests
    - Allow defining custom MIB (Management Information Base) for the agent
 
 2. Simulation Behaviors 
@@ -46,8 +46,7 @@ The Mock SNMP Agent is a tool designed to simulate the behavior of a real SNMP a
    - Include a set of predefined MIBs and simulation configurations 
 
 4. Portability
-   - Support running on Linux, macOS, and Windows platforms 
-   - Provide packages for easy installation via pip, apt, brew, etc.
+   - Support running on Linux, macOS, and Windows platforms
 
 ## Milestones
 1. Initial prototype with basic SNMP support and static MIB (4 weeks) 
@@ -56,8 +55,10 @@ The Mock SNMP Agent is a tool designed to simulate the behavior of a real SNMP a
 4. Documentation, packaging, and release (2 weeks)
 
 ## Out of Scope  
-- SNMP trap generation (focusing on agent behavior for now)
+- SNMP trap generation
+- SNMP SET operations
 - Graphical user interface (will provide config files and APIs) 
 - Simulating agent-specific MIB extensions (staying generic)
+- Package distribution (pip, apt, brew, etc.)
 
 Please let me know if you have any questions or additional requirements!

@@ -35,7 +35,6 @@
    - Export capabilities for logs/metrics
 
 4. **Enhanced Features**
-   - Explicit SET operation support and examples
    - More predefined MIB sets
    - Better documentation of advanced features
 
@@ -160,12 +159,7 @@ simulation:
 **Timeline: 2-3 days**
 
 #### Tasks
-1. **SET Operation Examples**
-   - Create comprehensive SET examples
-   - Document writeable OIDs
-   - Add persistence options
-
-2. **Predefined MIB Sets**
+1. **Predefined MIB Sets**
    - Create `data/mibs/` directory
    - Add device-specific MIB sets:
      - cisco-router.snmprec
@@ -174,7 +168,7 @@ simulation:
      - network-printer.snmprec
      - ups-device.snmprec
 
-3. **MIB Conversion Tools**
+2. **MIB Conversion Tools**
    - Add `--convert-mib` option
    - Wrapper for mib2rec functionality
    - Batch MIB conversion support

@@ -261,7 +261,16 @@ For advanced usage, use snmpsim-command-responder directly.
         except Exception as e:
             print(f"Error loading configuration: {e}")
             return 1
-    elif any([args.delay and args.delay > 0, args.drop_rate, args.packet_loss, args.snmpv3_auth_failures, args.snmpv3_clock_skew, args.snmpv3_engine_failures]):
+    elif any(
+        [
+            args.delay and args.delay > 0,
+            args.drop_rate,
+            args.packet_loss,
+            args.snmpv3_auth_failures,
+            args.snmpv3_clock_skew,
+            args.snmpv3_engine_failures,
+        ]
+    ):
         # Create config from CLI arguments
         if not SimulationConfig:
             print("Error: PyYAML not installed. Install with: pip install pyyaml")
@@ -291,20 +300,43 @@ For advanced usage, use snmpsim-command-responder directly.
             ] = args.packet_loss
 
         # Apply SNMPv3 security failure CLI overrides
-        if any([args.snmpv3_auth_failures, args.snmpv3_clock_skew, args.snmpv3_engine_failures]):
-            config.config["simulation"]["behaviors"]["snmpv3_security"]["enabled"] = True
-            
+        if any(
+            [
+                args.snmpv3_auth_failures,
+                args.snmpv3_clock_skew,
+                args.snmpv3_engine_failures,
+            ]
+        ):
+            config.config["simulation"]["behaviors"]["snmpv3_security"][
+                "enabled"
+            ] = True
+
             if args.snmpv3_auth_failures is not None and args.snmpv3_auth_failures > 0:
-                config.config["simulation"]["behaviors"]["snmpv3_security"]["authentication_failures"]["enabled"] = True
-                config.config["simulation"]["behaviors"]["snmpv3_security"]["authentication_failures"]["wrong_credentials_rate"] = args.snmpv3_auth_failures
-                
+                config.config["simulation"]["behaviors"]["snmpv3_security"][
+                    "authentication_failures"
+                ]["enabled"] = True
+                config.config["simulation"]["behaviors"]["snmpv3_security"][
+                    "authentication_failures"
+                ]["wrong_credentials_rate"] = args.snmpv3_auth_failures
+
             if args.snmpv3_clock_skew is not None and args.snmpv3_clock_skew > 150:
-                config.config["simulation"]["behaviors"]["snmpv3_security"]["time_window_failures"]["enabled"] = True
-                config.config["simulation"]["behaviors"]["snmpv3_security"]["time_window_failures"]["clock_skew_seconds"] = args.snmpv3_clock_skew
-                
-            if args.snmpv3_engine_failures is not None and args.snmpv3_engine_failures > 0:
-                config.config["simulation"]["behaviors"]["snmpv3_security"]["engine_discovery_failures"]["enabled"] = True
-                config.config["simulation"]["behaviors"]["snmpv3_security"]["engine_discovery_failures"]["wrong_engine_id_rate"] = args.snmpv3_engine_failures
+                config.config["simulation"]["behaviors"]["snmpv3_security"][
+                    "time_window_failures"
+                ]["enabled"] = True
+                config.config["simulation"]["behaviors"]["snmpv3_security"][
+                    "time_window_failures"
+                ]["clock_skew_seconds"] = args.snmpv3_clock_skew
+
+            if (
+                args.snmpv3_engine_failures is not None
+                and args.snmpv3_engine_failures > 0
+            ):
+                config.config["simulation"]["behaviors"]["snmpv3_security"][
+                    "engine_discovery_failures"
+                ]["enabled"] = True
+                config.config["simulation"]["behaviors"]["snmpv3_security"][
+                    "engine_discovery_failures"
+                ]["wrong_engine_id_rate"] = args.snmpv3_engine_failures
 
     # Determine data directory
     data_dir = args.data_dir if args.data_dir else get_data_dir()

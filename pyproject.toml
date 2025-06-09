@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mock-snmp-agent"
 version = "1.0.0"
-description = "A comprehensive SNMP simulator for testing and development purposes"
+description = "A comprehensive SNMP simulator with REST API and real-time monitoring for testing and development purposes"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [
@@ -47,6 +47,12 @@ classifiers = [
 requires-python = ">=3.8"
 dependencies = [
     "snmpsim-lextudio>=1.1.1",
+    "fastapi[all]>=0.100.0",
+    "uvicorn[standard]>=0.22.0",
+    "websockets>=11.0.0",
+    "pyyaml>=6.0",
+    "python-multipart>=0.0.5",
+    "pydantic>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -57,9 +63,26 @@ dev = [
     "black>=22.0.0",
 ]
 test = [
-    "pytest>=6.0.0",
-    "pytest-cov>=3.0.0",
-    "pytest-timeout>=2.0.0",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-html>=3.2.0",
+    "pytest-xdist>=3.3.0",
+    "httpx>=0.24.0",
+    "pytest-mock>=3.11.0",
+    "responses>=0.23.0",
+    "pytest-benchmark>=4.0.0",
+    "factory-boy>=3.3.0",
+    "faker>=19.0.0",
+    "requests>=2.31.0",
+]
+api = [
+    "fastapi[all]>=0.100.0",
+    "uvicorn[standard]>=0.22.0",
+    "websockets>=11.0.0",
+    "pyyaml>=6.0",
+    "python-multipart>=0.0.5",
+    "pydantic>=2.0.0",
 ]
 extended = [
     "snmpsim-data>=1.0.0",
@@ -74,9 +97,11 @@ Changelog = "https://github.com/mhuot/snmpsim/releases"
 
 [project.scripts]
 mock-snmp-agent = "mock_snmp_agent:main"
+api-test-runner = "run_api_tests:main"
 
 [tool.setuptools]
-py-modules = ["mock_snmp_agent", "test_basic", "test_prd_requirements", "performance_test"]
+py-modules = ["mock_snmp_agent", "test_basic", "test_prd_requirements", "performance_test", "run_api_tests"]
+packages = ["rest_api", "tests", "behaviors"]
 
 [tool.black]
 line-length = 88

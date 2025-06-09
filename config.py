@@ -212,49 +212,61 @@ class SimulationConfig:
         # Validate SNMPv3 security settings
         if behaviors["snmpv3_security"]["enabled"]:
             security = behaviors["snmpv3_security"]
-            
+
             # Validate time window settings
             if security["time_window_failures"]["enabled"]:
                 clock_skew = security["time_window_failures"]["clock_skew_seconds"]
                 if clock_skew < 151:  # Must be beyond 150-second window
                     raise ValueError("clock_skew_seconds must be > 150")
-                    
+
                 failure_rate = security["time_window_failures"]["failure_rate"]
                 if not 0 <= failure_rate <= 100:
-                    raise ValueError("time_window failure_rate must be between 0 and 100")
-            
+                    raise ValueError(
+                        "time_window failure_rate must be between 0 and 100"
+                    )
+
             # Validate authentication failure rates
             if security["authentication_failures"]["enabled"]:
                 auth = security["authentication_failures"]
-                for rate_name in ["wrong_credentials_rate", "unsupported_auth_rate", "unknown_user_rate"]:
+                for rate_name in [
+                    "wrong_credentials_rate",
+                    "unsupported_auth_rate",
+                    "unknown_user_rate",
+                ]:
                     rate = auth[rate_name]
                     if not 0 <= rate <= 100:
-                        raise ValueError(f"authentication {rate_name} must be between 0 and 100")
-            
+                        raise ValueError(
+                            f"authentication {rate_name} must be between 0 and 100"
+                        )
+
             # Validate privacy failure rates
             if security["privacy_failures"]["enabled"]:
                 privacy = security["privacy_failures"]
                 for rate_name in ["decryption_error_rate", "unsupported_privacy_rate"]:
                     rate = privacy[rate_name]
                     if not 0 <= rate <= 100:
-                        raise ValueError(f"privacy {rate_name} must be between 0 and 100")
-            
+                        raise ValueError(
+                            f"privacy {rate_name} must be between 0 and 100"
+                        )
+
             # Validate engine discovery failure rates
             if security["engine_discovery_failures"]["enabled"]:
                 engine = security["engine_discovery_failures"]
                 for rate_name in ["wrong_engine_id_rate", "boot_counter_issues_rate"]:
                     rate = engine[rate_name]
                     if not 0 <= rate <= 100:
-                        raise ValueError(f"engine discovery {rate_name} must be between 0 and 100")
+                        raise ValueError(
+                            f"engine discovery {rate_name} must be between 0 and 100"
+                        )
 
         # Validate REST API settings
         if self.config["simulation"]["rest_api"]["enabled"]:
             api_config = self.config["simulation"]["rest_api"]
-            
+
             port = api_config["port"]
             if not 1 <= port <= 65535:
                 raise ValueError("REST API port must be between 1 and 65535")
-            
+
             # Validate CORS origins
             if api_config["cors"]["enabled"]:
                 origins = api_config["cors"]["origins"]
@@ -264,19 +276,23 @@ class SimulationConfig:
         # Validate state machine settings
         if self.config["simulation"]["state_machine"]["enabled"]:
             sm_config = self.config["simulation"]["state_machine"]
-            
+
             # Validate device type
             supported_types = ["router", "switch", "server", "printer", "generic"]
             device_type = sm_config["device_type"]
             if device_type not in supported_types:
-                raise ValueError(f"Device type must be one of: {', '.join(supported_types)}")
-            
+                raise ValueError(
+                    f"Device type must be one of: {', '.join(supported_types)}"
+                )
+
             # Validate transition delays
             delays = sm_config["transition_delays"]
             if delays["min"] < 0 or delays["max"] < 0:
                 raise ValueError("Transition delays must be >= 0")
             if delays["min"] > delays["max"]:
-                raise ValueError("Minimum transition delay cannot be greater than maximum")
+                raise ValueError(
+                    "Minimum transition delay cannot be greater than maximum"
+                )
 
     def generate_snmprec_files(
         self, source_dir: str, temp_dir: Optional[str] = None
@@ -402,12 +418,14 @@ class SimulationConfig:
             elif behaviors["snmpv3_security"]["enabled"]:
                 from .behaviors.snmpv3_security import (  # pylint: disable=import-outside-toplevel
                     create_security_config_from_dict,
-                    SNMPv3SecuritySimulator
+                    SNMPv3SecuritySimulator,
                 )
-                
-                security_config = create_security_config_from_dict({"snmpv3_security": behaviors["snmpv3_security"]})
+
+                security_config = create_security_config_from_dict(
+                    {"snmpv3_security": behaviors["snmpv3_security"]}
+                )
                 simulator = SNMPv3SecuritySimulator(security_config)
-                
+
                 # Try to apply security failures
                 failure_line = None
                 if security_config.time_window_enabled:
@@ -418,7 +436,7 @@ class SimulationConfig:
                     failure_line = simulator.generate_privacy_failure(oid)
                 elif security_config.engine_failures_enabled:
                     failure_line = simulator.generate_engine_failure(oid)
-                
+
                 if failure_line:
                     # Extract the modified parts from the failure line
                     failure_parts = failure_line.split("|", 2)

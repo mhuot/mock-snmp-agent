@@ -101,10 +101,6 @@ class TestPerformance:
             assert throughput > 1, f"Throughput too low: {throughput:.1f} req/sec"
 
     @pytest.mark.slow
-    @pytest.mark.skipif(
-        not pytest.config.getoption("--run-extensive", default=False),
-        reason="Need --run-extensive option to run",
-    )
     def test_extended_performance(self, simulator_ready, snmp_endpoint):
         """Test performance with higher load (requires --run-extensive)."""
         num_requests = 100
