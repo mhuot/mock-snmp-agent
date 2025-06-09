@@ -1,0 +1,341 @@
+# ifXTable Configuration for Mock SNMP Agent
+# This configuration defines interface simulation parameters
+
+interfaces:
+  # Router uplink interfaces
+  router_uplinks:
+    - index: 1
+      name: "GigabitEthernet0/1"
+      alias: "Uplink to Core Switch - Primary"
+      type: "gigabitEthernet"
+      speed_mbps: 1000
+      admin_status: "up"
+      oper_status: "up"
+      mtu: 1500
+      utilization_pattern: "business_hours"
+      base_utilization: 0.25
+      traffic_ratios:
+        unicast: 0.85
+        multicast: 0.10
+        broadcast: 0.05
+      error_simulation:
+        input_errors_rate: 0.0001
+        output_errors_rate: 0.0001
+        input_discards_rate: 0.00005
+        output_discards_rate: 0.00005
+      link_flap:
+        enabled: false
+        interval: 3600
+        down_duration: 30
+        
+    - index: 2
+      name: "GigabitEthernet0/2"
+      alias: "Uplink to Core Switch - Backup"
+      type: "gigabitEthernet"
+      speed_mbps: 1000
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "constant_low"
+      base_utilization: 0.05
+      link_flap:
+        enabled: true
+        interval: 7200  # Every 2 hours
+        down_duration: 45
+
+  # Server farm connections  
+  server_connections:
+    - index: 10
+      name: "TenGigabitEthernet1/1"
+      alias: "Server Farm Connection - Web Servers"
+      type: "gigabitEthernet"
+      speed_mbps: 10000
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "server_load"
+      base_utilization: 0.60
+      traffic_ratios:
+        unicast: 0.95
+        multicast: 0.03
+        broadcast: 0.02
+        
+    - index: 11
+      name: "TenGigabitEthernet1/2"
+      alias: "Server Farm Connection - Database Servers"
+      type: "gigabitEthernet"
+      speed_mbps: 10000
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "constant_high"
+      base_utilization: 0.80
+      
+    - index: 12
+      name: "TenGigabitEthernet1/3"
+      alias: "Storage Network Connection"
+      type: "gigabitEthernet"
+      speed_mbps: 10000
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "bursty"
+      base_utilization: 0.30
+
+  # Access layer interfaces
+  access_interfaces:
+    - index: 20
+      name: "FastEthernet2/1"
+      alias: "Access Port - Building A"
+      type: "ethernetCsmacd"
+      speed_mbps: 100
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "business_hours"
+      base_utilization: 0.40
+      
+    - index: 21
+      name: "FastEthernet2/2"
+      alias: "Access Port - Building B"
+      type: "ethernetCsmacd"
+      speed_mbps: 100
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "business_hours"
+      base_utilization: 0.35
+      link_flap:
+        enabled: true
+        interval: 1800  # Every 30 minutes (unstable connection)
+        down_duration: 15
+
+  # WAN interfaces
+  wan_interfaces:
+    - index: 30
+      name: "Serial3/0"
+      alias: "WAN Connection - ISP Primary"
+      type: "ppp"
+      speed_mbps: 100
+      admin_status: "up"
+      oper_status: "up"
+      utilization_pattern: "constant_medium"
+      base_utilization: 0.45
+      error_simulation:
+        input_errors_rate: 0.001   # Higher error rate for WAN
+        output_errors_rate: 0.001
+        
+    - index: 31
+      name: "Serial3/1"
+      alias: "WAN Connection - ISP Backup"
+      type: "ppp"
+      speed_mbps: 50
+      admin_status: "up"
+      oper_status: "down"  # Backup link, normally down
+      utilization_pattern: "constant_low"
+      base_utilization: 0.02
+
+# Simulation scenarios for testing
+simulation_scenarios:
+  # Basic link flap testing
+  link_flap_test:
+    description: "Test interface link flapping behavior"
+    interfaces: [1, 2, 20]
+    duration: 600  # 10 minutes
+    events:
+      - type: "link_flap"
+        interface: 1
+        delay: 60
+        down_duration: 30
+      - type: "link_flap"
+        interface: 2
+        delay: 120
+        down_duration: 45
+      - type: "link_flap"
+        interface: 20
+        delay: 180
+        down_duration: 20
+
+  # Speed negotiation testing
+  speed_change_test:
+    description: "Test interface speed auto-negotiation"
+    interfaces: [1, 10]
+    duration: 900  # 15 minutes
+    events:
+      - type: "speed_change"
+        interface: 1
+        delay: 60
+        new_speed: 100
+      - type: "speed_change"
+        interface: 1
+        delay: 240
+        new_speed: 1000
+      - type: "speed_change"
+        interface: 10
+        delay: 360
+        new_speed: 1000
+      - type: "speed_change"
+        interface: 10
+        delay: 600
+        new_speed: 10000
+
+  # Network congestion testing
+  congestion_test:
+    description: "Test network behavior under congestion"
+    interfaces: [10, 11, 12]
+    duration: 1200  # 20 minutes
+    traffic_modifications:
+      - interface: 10
+        utilization_override: 0.95
+        duration: 300
+      - interface: 11
+        utilization_override: 0.98
+        duration: 600
+      - interface: 12
+        utilization_override: 0.90
+        duration: 400
+
+  # Redundancy failover testing
+  redundancy_test:
+    description: "Test primary/backup interface failover"
+    primary_interface: 1
+    backup_interface: 2
+    duration: 800
+    events:
+      - type: "admin_down"
+        interface: 1
+        delay: 120
+      - type: "activate_backup"
+        interface: 2
+        delay: 150
+      - type: "admin_up"
+        interface: 1
+        delay: 600
+      - type: "deactivate_backup"
+        interface: 2
+        delay: 650
+
+# Global simulation settings
+simulation:
+  # Counter acceleration for testing
+  counter_acceleration:
+    enabled: true
+    factor: 100  # Speed up counters 100x for faster wrap testing
+    
+  # Random event generation
+  random_events:
+    enabled: true
+    probability: 0.0005  # 0.05% chance per interface per second
+    event_types:
+      - "link_flap"
+      - "speed_change"
+      - "utilization_spike"
+      
+  # Error injection
+  error_injection:
+    enabled: true
+    global_error_multiplier: 1.0
+    burst_errors:
+      enabled: true
+      probability: 0.01
+      duration: 60
+      
+  # State persistence
+  persistence:
+    enabled: true
+    state_file: "data/interface_states.json"
+    save_interval: 300  # Save every 5 minutes
+    
+  # Performance settings
+  performance:
+    update_interval: 1.0  # Update counters every second
+    batch_updates: true
+    max_interfaces: 1000
+
+# Traffic pattern definitions
+traffic_patterns:
+  business_hours:
+    description: "Typical business day traffic pattern"
+    peak_hours: [9, 10, 11, 14, 15, 16]
+    peak_utilization: 0.8
+    baseline_utilization: 0.15
+    variance: 0.1
+    
+  server_load:
+    description: "Server workload with periodic spikes"
+    base_utilization: 0.3
+    peak_multiplier: 3.0
+    peak_probability: 0.1
+    variance: 0.2
+    
+  bursty:
+    description: "Bursty traffic with periodic bursts"
+    burst_interval: 300  # seconds
+    burst_duration: 60   # seconds
+    burst_utilization: 0.95
+    idle_utilization: 0.05
+    variance: 0.15
+    
+  constant_low:
+    description: "Low constant utilization"
+    utilization: 0.1
+    variance: 0.02
+    
+  constant_medium:
+    description: "Medium constant utilization"
+    utilization: 0.5
+    variance: 0.05
+    
+  constant_high:
+    description: "High constant utilization"
+    utilization: 0.8
+    variance: 0.1
+
+# Interface type definitions
+interface_types:
+  ethernetCsmacd:
+    iana_type: 6
+    typical_speeds: [10, 100, 1000]
+    duplex_capable: true
+    error_characteristics: "low"
+    
+  gigabitEthernet:
+    iana_type: 117
+    typical_speeds: [1000, 10000, 25000, 40000, 100000]
+    duplex_capable: true
+    error_characteristics: "very_low"
+    fiber_capable: true
+    
+  fastEthernet:
+    iana_type: 62
+    typical_speeds: [100]
+    duplex_capable: true
+    error_characteristics: "low"
+    
+  ppp:
+    iana_type: 23
+    typical_speeds: [1, 2, 10, 45, 100]
+    error_characteristics: "medium"
+    overhead_factor: 1.1
+    
+  tunnel:
+    iana_type: 131
+    typical_speeds: [1, 10, 100, 1000]
+    error_characteristics: "variable"
+    overhead_factor: 1.2
+
+# Monitoring and alerting thresholds
+monitoring:
+  thresholds:
+    utilization_warning: 0.8
+    utilization_critical: 0.95
+    error_rate_warning: 0.01
+    error_rate_critical: 0.05
+    
+  alerting:
+    enabled: true
+    channels:
+      - type: "webhook"
+        url: "http://monitoring.example.com/alerts"
+      - type: "log"
+        file: "logs/interface_alerts.log"
+        
+  metrics_export:
+    enabled: true
+    format: "prometheus"
+    endpoint: "/metrics/interfaces"
+    update_interval: 30
