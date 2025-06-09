@@ -15,10 +15,11 @@ The Mock SNMP Agent is a comprehensive SNMP simulator designed to simulate the b
 
 ### 1. SNMP Protocol Support
 - Implement SNMP v1, v2c, and v3 protocol support ✅
-- Respond to SNMP GET, GETNEXT, and GETBULK requests ✅
+- Respond to SNMP GET, GETNEXT, GETBULK, and SET requests ✅
 - Allow defining custom MIB (Management Information Base) for the agent ✅
 - Support community string authentication ✅
 - Full SNMPv3 USM (User-based Security Model) support ✅
+- Writeable OID support via variation/writecache community ✅
 
 ### 2. Simulation Behaviors
 - **Normal operation**: Respond to requests as a typical SNMP agent ✅
@@ -228,12 +229,30 @@ simulation:
 /ws/activity          - SNMP activity stream
 ```
 
+## Recently Enhanced (New Capabilities)
+
+### ✅ AgentX-Style Response Simulation
+- **Subagent registration delays** - Simulates AgentX subagent registration timeouts ✅
+- **Master agent communication delays** - Variable delays by MIB subsystem ✅  
+- **Connection failure simulation** - Subagent disconnection/reconnection scenarios ✅
+- **OID-specific delay patterns** - Different delays for interfaces, routing, hardware ✅
+
+### ✅ SNMPv3 Context Handling  
+- **Multiple context support** - VRF, bridge domains, firewall zones ✅
+- **Context-based access control** - User authorization per context ✅
+- **Context-specific OID values** - Same OID, different values per context ✅
+- **Enterprise context simulation** - Customer VRFs, management contexts ✅
+
+### ✅ MIB Boundary Response Injection
+- **endOfMibView responses** - Proper MIB walk termination ✅
+- **noSuchObject simulation** - Missing MIB objects ✅
+- **noSuchInstance handling** - Sparse table simulation ✅
+- **Configurable boundary conditions** - Custom MIB view limits ✅
+
 ## Out of Scope
 
-- SNMP trap generation
-- SNMP SET operations  
+- SNMP trap generation  
 - Graphical user interface (provides config files and APIs)
-- Simulating agent-specific MIB extensions (staying generic)
 - Package distribution (pip, apt, brew, etc.)
 
 ## Success Criteria

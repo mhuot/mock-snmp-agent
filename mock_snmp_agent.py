@@ -18,8 +18,10 @@ from pathlib import Path
 
 try:
     from config import SimulationConfig
+    import yaml
 except ImportError:
     SimulationConfig = None
+    yaml = None
 
 
 def get_data_dir():
@@ -133,14 +135,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  mock-snmp-agent                          # Start on default port 11611
-  mock-snmp-agent --port 1161              # Start on port 1161
-  mock-snmp-agent --data-dir ./data        # Use custom data directory
-  mock-snmp-agent --config config.yaml     # Use configuration file
-  mock-snmp-agent --delay 100              # Add 100ms delay to responses
-  mock-snmp-agent --drop-rate 10           # Drop 10% of requests
-  mock-snmp-agent --restart-interval 300   # Restart every 5 minutes
-  mock-snmp-agent --help                   # Show this help
+  mock-snmp-agent                                    # Start on default port 11611
+  mock-snmp-agent --port 1161                        # Start on port 1161
+  mock-snmp-agent --data-dir ./data                  # Use custom data directory
+  mock-snmp-agent --config config.yaml               # Use configuration file
+  mock-snmp-agent --ifxtable-config config/ifxtable.yaml  # Enable ifXTable simulation
+  mock-snmp-agent --rest-api --api-port 8080         # Enable REST API on port 8080
+  mock-snmp-agent --delay 100                        # Add 100ms delay to responses
+  mock-snmp-agent --drop-rate 10                     # Drop 10% of requests
+  mock-snmp-agent --restart-interval 300             # Restart every 5 minutes
+  mock-snmp-agent --help                             # Show this help
 
 Simulation behaviors:
   --delay MS                    Add delay to all responses (milliseconds)
@@ -189,6 +193,25 @@ For advanced usage, use snmpsim-command-responder directly.
         "--config",
         "-c",
         help="Configuration file (YAML or JSON) for simulation behaviors",
+    )
+    
+    # ifXTable configuration
+    parser.add_argument(
+        "--ifxtable-config",
+        help="ifXTable configuration file (YAML) for interface simulation",
+    )
+    
+    parser.add_argument(
+        "--rest-api",
+        action="store_true",
+        help="Enable REST API server for remote control",
+    )
+    
+    parser.add_argument(
+        "--api-port",
+        type=int,
+        default=8080,
+        help="REST API port (default: 8080, requires --rest-api)",
     )
 
     # Behavior shortcuts (override config file)
@@ -266,8 +289,14 @@ For advanced usage, use snmpsim-command-responder directly.
         except (FileNotFoundError, IOError) as e:
             print(f"Configuration file error: {e}")
             return 1
-        except (yaml.YAMLError, ValueError) as e:
+        except ValueError as e:
             print(f"Configuration parsing error: {e}")
+            return 1
+        except Exception as e:
+            if yaml and hasattr(yaml, 'YAMLError') and isinstance(e, yaml.YAMLError):
+                print(f"YAML parsing error: {e}")
+            else:
+                print(f"Configuration error: {e}")
             return 1
     elif any(
         [
@@ -349,6 +378,38 @@ For advanced usage, use snmpsim-command-responder directly.
     # Determine data directory
     data_dir = args.data_dir if args.data_dir else get_data_dir()
 
+    # Initialize ifXTable if configuration provided
+    ifxtable_simulator = None
+    ifxtable_state_engine = None
+    if args.ifxtable_config:
+        try:
+            from behaviors.ifxtable_config import load_ifxtable_configuration
+            from pathlib import Path
+            
+            config_path = Path(args.ifxtable_config)
+            if not config_path.exists():
+                print(f"Error: ifXTable config file not found: {config_path}")
+                return 1
+            
+            ifxtable_simulator, ifxtable_state_engine = load_ifxtable_configuration(config_path)
+            ifxtable_state_engine.start()
+            
+            # Generate ifXTable .snmprec file
+            ifxtable_snmprec = Path(data_dir) / "ifxtable.snmprec"
+            ifxtable_simulator.generate_ifxtable_snmprec(ifxtable_snmprec)
+            
+            print(f"Loaded ifXTable configuration with {len(ifxtable_simulator.interfaces)} interfaces")
+            
+            # Register cleanup for state engine
+            atexit.register(lambda: ifxtable_state_engine.stop() if ifxtable_state_engine else None)
+            
+        except ImportError as e:
+            print(f"Error: Missing dependencies for ifXTable simulation: {e}")
+            return 1
+        except Exception as e:
+            print(f"Error loading ifXTable configuration: {e}")
+            return 1
+
     # Generate modified .snmprec files if config is provided
     if config:
         temp_data_dir = config.generate_snmprec_files(data_dir)
@@ -391,11 +452,37 @@ For advanced usage, use snmpsim-command-responder directly.
         if enabled:
             print(f"Behaviors: {', '.join(enabled)}")
 
+    # Start REST API server if requested
+    api_server_process = None
+    if args.rest_api:
+        try:
+            # Start the REST API server in a separate process
+            api_cmd = [
+                sys.executable, "-m", "rest_api.server", 
+                "--port", str(args.api_port),
+                "--snmp-host", args.host,
+                "--snmp-port", str(args.port)
+            ]
+            
+            api_server_process = subprocess.Popen(api_cmd)
+            print(f"Started REST API server on port {args.api_port}")
+            
+            # Register cleanup for API server
+            atexit.register(lambda: api_server_process.terminate() if api_server_process else None)
+            
+        except Exception as e:
+            print(f"Error starting REST API server: {e}")
+            print("Continuing with SNMP agent only...")
+
     if not args.quiet:
         print(
             "Test with: snmpget -v2c -c public "
             f"{args.host}:{args.port} 1.3.6.1.2.1.1.1.0"
         )
+        if args.rest_api:
+            print(f"REST API available at: http://localhost:{args.api_port}")
+        if args.ifxtable_config:
+            print("ifXTable interfaces are available under OID 1.3.6.1.2.1.31.1.1.1")
         print("Press Ctrl+C to stop...")
 
     # Handle restart behavior
