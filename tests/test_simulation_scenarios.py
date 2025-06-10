@@ -434,6 +434,7 @@ class TestExecutionManagement:
         controller = Mock(spec=MockSNMPAgentController)
         return SimulationScenarioManager(controller)
 
+    @pytest.mark.asyncio
     async def test_multiple_concurrent_executions(self, scenario_manager):
         """Test multiple concurrent executions."""
         scenarios = []
@@ -471,6 +472,7 @@ class TestExecutionManagement:
         assert hasattr(scenario_manager, "executions")
         assert isinstance(scenario_manager.executions, dict)
 
+    @pytest.mark.asyncio
     async def test_execution_progress_tracking(self, scenario_manager):
         """Test execution progress tracking."""
         scenario = TestScenario(
