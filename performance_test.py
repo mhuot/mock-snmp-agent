@@ -407,10 +407,16 @@ def comprehensive_performance_suite():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SNMP Agent Performance Testing")
-    parser.add_argument("--quick", action="store_true", 
-                       help="Run quick performance test (equivalent to quick_performance_test.py)")
-    parser.add_argument("--simple", action="store_true",
-                       help="Run simple PRD test (equivalent to simple_prd_test.py)")
+    parser.add_argument(
+        "--quick",
+        action="store_true",
+        help="Run quick performance test (equivalent to quick_performance_test.py)",
+    )
+    parser.add_argument(
+        "--simple",
+        action="store_true",
+        help="Run simple PRD test (equivalent to simple_prd_test.py)",
+    )
     args = parser.parse_args()
 
     # Check if psutil is available

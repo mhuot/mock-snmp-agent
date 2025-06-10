@@ -194,19 +194,19 @@ For advanced usage, use snmpsim-command-responder directly.
         "-c",
         help="Configuration file (YAML or JSON) for simulation behaviors",
     )
-    
+
     # ifXTable configuration
     parser.add_argument(
         "--ifxtable-config",
         help="ifXTable configuration file (YAML) for interface simulation",
     )
-    
+
     parser.add_argument(
         "--rest-api",
         action="store_true",
         help="Enable REST API server for remote control",
     )
-    
+
     parser.add_argument(
         "--api-port",
         type=int,
@@ -292,11 +292,8 @@ For advanced usage, use snmpsim-command-responder directly.
         except ValueError as e:
             print(f"Configuration parsing error: {e}")
             return 1
-        except Exception as e:
-            if yaml and hasattr(yaml, 'YAMLError') and isinstance(e, yaml.YAMLError):
-                print(f"YAML parsing error: {e}")
-            else:
-                print(f"Configuration error: {e}")
+        except (AttributeError, KeyError, TypeError) as e:
+            print(f"Configuration structure error: {e}")
             return 1
     elif any(
         [
@@ -384,29 +381,34 @@ For advanced usage, use snmpsim-command-responder directly.
     if args.ifxtable_config:
         try:
             from behaviors.ifxtable_config import load_ifxtable_configuration
-            from pathlib import Path
-            
+
             config_path = Path(args.ifxtable_config)
             if not config_path.exists():
                 print(f"Error: ifXTable config file not found: {config_path}")
                 return 1
-            
-            ifxtable_simulator, ifxtable_state_engine = load_ifxtable_configuration(config_path)
+
+            ifxtable_simulator, ifxtable_state_engine = load_ifxtable_configuration(
+                config_path
+            )
             ifxtable_state_engine.start()
-            
+
             # Generate ifXTable .snmprec file
             ifxtable_snmprec = Path(data_dir) / "ifxtable.snmprec"
             ifxtable_simulator.generate_ifxtable_snmprec(ifxtable_snmprec)
-            
-            print(f"Loaded ifXTable configuration with {len(ifxtable_simulator.interfaces)} interfaces")
-            
+
+            print(
+                f"Loaded ifXTable configuration with {len(ifxtable_simulator.interfaces)} interfaces"
+            )
+
             # Register cleanup for state engine
-            atexit.register(lambda: ifxtable_state_engine.stop() if ifxtable_state_engine else None)
-            
+            atexit.register(
+                lambda: ifxtable_state_engine.stop() if ifxtable_state_engine else None
+            )
+
         except ImportError as e:
             print(f"Error: Missing dependencies for ifXTable simulation: {e}")
             return 1
-        except Exception as e:
+        except (IOError, ValueError, AttributeError) as e:
             print(f"Error loading ifXTable configuration: {e}")
             return 1
 
@@ -458,19 +460,26 @@ For advanced usage, use snmpsim-command-responder directly.
         try:
             # Start the REST API server in a separate process
             api_cmd = [
-                sys.executable, "-m", "rest_api.server", 
-                "--port", str(args.api_port),
-                "--snmp-host", args.host,
-                "--snmp-port", str(args.port)
+                sys.executable,
+                "-m",
+                "rest_api.server",
+                "--port",
+                str(args.api_port),
+                "--snmp-host",
+                args.host,
+                "--snmp-port",
+                str(args.port),
             ]
-            
+
             api_server_process = subprocess.Popen(api_cmd)
             print(f"Started REST API server on port {args.api_port}")
-            
+
             # Register cleanup for API server
-            atexit.register(lambda: api_server_process.terminate() if api_server_process else None)
-            
-        except Exception as e:
+            atexit.register(
+                lambda: api_server_process.terminate() if api_server_process else None
+            )
+
+        except (OSError, subprocess.SubprocessError) as e:
             print(f"Error starting REST API server: {e}")
             print("Continuing with SNMP agent only...")
 

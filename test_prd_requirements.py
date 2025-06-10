@@ -16,10 +16,10 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 def run_basic_test():
     """Basic SNMP test - equivalent to test_basic.py functionality"""
     print("Starting SNMP simulator...")
-    
+
     env = os.environ.copy()
     env["PYTHONWARNINGS"] = "ignore"
-    
+
     with subprocess.Popen(
         [
             "snmpsim-command-responder",
@@ -35,7 +35,14 @@ def run_basic_test():
         try:
             print("\nTesting SNMP GET...")
             result = subprocess.run(
-                ["snmpget", "-v2c", "-c", "public", "localhost:11611", "1.3.6.1.2.1.1.1.0"],
+                [
+                    "snmpget",
+                    "-v2c",
+                    "-c",
+                    "public",
+                    "localhost:11611",
+                    "1.3.6.1.2.1.1.1.0",
+                ],
                 capture_output=True,
                 text=True,
                 check=False,
@@ -184,9 +191,14 @@ def check_snmp_tools():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Mock SNMP Agent PRD Requirements Test")
-    parser.add_argument("--basic", action="store_true", 
-                       help="Run basic SNMP test only (equivalent to test_basic.py)")
+    parser = argparse.ArgumentParser(
+        description="Mock SNMP Agent PRD Requirements Test"
+    )
+    parser.add_argument(
+        "--basic",
+        action="store_true",
+        help="Run basic SNMP test only (equivalent to test_basic.py)",
+    )
     args = parser.parse_args()
 
     if args.basic:

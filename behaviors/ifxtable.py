@@ -668,19 +668,17 @@ class IfXTableSimulator:
             # 6-13. High capacity 64-bit counters (use 64-bit gauge for now)
             hc_counter_values = {
                 6: int(interface_def.base_utilization * 1000000000),  # ifHCInOctets
-                7: int(interface_def.base_utilization * 100000),      # ifHCInUcastPkts  
-                8: int(interface_def.base_utilization * 10000),       # ifHCInMulticastPkts
-                9: int(interface_def.base_utilization * 1000),        # ifHCInBroadcastPkts
+                7: int(interface_def.base_utilization * 100000),  # ifHCInUcastPkts
+                8: int(interface_def.base_utilization * 10000),  # ifHCInMulticastPkts
+                9: int(interface_def.base_utilization * 1000),  # ifHCInBroadcastPkts
                 10: int(interface_def.base_utilization * 800000000),  # ifHCOutOctets
-                11: int(interface_def.base_utilization * 80000),      # ifHCOutUcastPkts
-                12: int(interface_def.base_utilization * 8000),       # ifHCOutMulticastPkts
-                13: int(interface_def.base_utilization * 800),        # ifHCOutBroadcastPkts
+                11: int(interface_def.base_utilization * 80000),  # ifHCOutUcastPkts
+                12: int(interface_def.base_utilization * 8000),  # ifHCOutMulticastPkts
+                13: int(interface_def.base_utilization * 800),  # ifHCOutBroadcastPkts
             }
             for oid_suffix in [6, 7, 8, 9, 10, 11, 12, 13]:
                 value = hc_counter_values.get(oid_suffix, 0)
-                lines.append(
-                    f"{base_oid}.{oid_suffix}.{interface_index}|70|{value}\n"
-                )
+                lines.append(f"{base_oid}.{oid_suffix}.{interface_index}|70|{value}\n")
 
             # 14. ifLinkUpDownTrapEnable (INTEGER)
             lines.append(
