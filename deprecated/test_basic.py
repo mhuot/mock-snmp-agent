@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Simple test to verify basic snmpsim functionality"""
 
+import os
 import subprocess
 import time
-import os
 
 # Start simulator in background
 env = os.environ.copy()
@@ -19,7 +19,6 @@ with subprocess.Popen(
     ],
     env=env,
 ) as sim:
-
     # Give it time to start
     time.sleep(5)
 

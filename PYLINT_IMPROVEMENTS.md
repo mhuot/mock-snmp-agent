@@ -22,8 +22,8 @@ Successfully improved pylint score from **9.12/10** to **9.48/10** (+0.36 improv
      # Before
      except Exception as e:
          print(f"Error: {e}")
-     
-     # After  
+
+     # After
      except (FileNotFoundError, IOError) as e:
          print(f"Configuration file error: {e}")
      except (yaml.YAMLError, ValueError) as e:
@@ -40,7 +40,7 @@ Successfully improved pylint score from **9.12/10** to **9.48/10** (+0.36 improv
      ```python
      # Before
      logger.error(f"Health check failed: {e}")
-     
+
      # After
      logger.error("Health check failed: %s", str(e))
      ```
@@ -53,7 +53,7 @@ Successfully improved pylint score from **9.12/10** to **9.48/10** (+0.36 improv
      ```python
      # Before
      with open(file, "r") as f:
-     
+
      # After
      with open(file, "r", encoding="utf-8") as f:
      ```
@@ -72,7 +72,7 @@ Successfully improved pylint score from **9.12/10** to **9.48/10** (+0.36 improv
          return value
      else:
          raise Exception()
-     
+
      # After
      if condition:
          return value
@@ -98,7 +98,7 @@ These are acceptable in this context as they reflect the comprehensive nature of
 Your code has been rated at 9.12/10
 ```
 
-### After Improvements  
+### After Improvements
 ```
 Your code has been rated at 9.48/10 (previous run: 9.12/10, +0.36)
 ```

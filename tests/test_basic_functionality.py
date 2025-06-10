@@ -1,8 +1,9 @@
 """Basic functionality tests for Mock SNMP Agent."""
 
-import pytest
 import subprocess
 import time
+
+import pytest
 
 
 class TestBasicSNMP:

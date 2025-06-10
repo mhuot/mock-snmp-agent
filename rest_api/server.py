@@ -7,29 +7,32 @@ FastAPI server for Mock SNMP Agent control and monitoring.
 
 import asyncio
 import logging
-import time
 import threading
+import time
 from typing import Optional
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from .controllers import MockSNMPAgentController
+from .export_import import setup_export_import_endpoints
 from .models import (
+    AgentStatusResponse,
+    ConfigurationResponse,
+    ConfigurationUpdate,
+    ErrorResponse,
     HealthResponse,
     MetricsResponse,
-    ConfigurationUpdate,
-    ConfigurationResponse,
-    AgentStatusResponse,
+    OIDListResponse,
     RestartRequest,
     RestartResponse,
-    ErrorResponse,
-    OIDListResponse,
 )
-from .controllers import MockSNMPAgentController
-from .websocket import setup_websocket_routes, manager as ws_manager, MetricsCollector
 from .query_endpoints import setup_query_endpoints
 from .simulation_control import setup_simulation_endpoints
-from .export_import import setup_export_import_endpoints
+from .websocket import MetricsCollector
+from .websocket import manager as ws_manager
+from .websocket import setup_websocket_routes
 
 
 class SNMPAgentAPIServer:

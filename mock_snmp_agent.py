@@ -6,19 +6,20 @@ This module provides a simple wrapper and entry point for the snmpsim-lextudio
 SNMP simulator, making it easier to use as a testing tool.
 """
 
-import sys
-import subprocess
-import os
 import argparse
-import time
-import threading
-import shutil
 import atexit
+import os
+import shutil
+import subprocess
+import sys
+import threading
+import time
 from pathlib import Path
 
 try:
-    from config import SimulationConfig
     import yaml
+
+    from config import SimulationConfig
 except ImportError:
     SimulationConfig = None
     yaml = None
@@ -286,7 +287,7 @@ For advanced usage, use snmpsim-command-responder directly.
         try:
             config = SimulationConfig(args.config)
             print(f"Loaded configuration from: {args.config}")
-        except (FileNotFoundError, IOError) as e:
+        except (FileNotFoundError, OSError) as e:
             print(f"Configuration file error: {e}")
             return 1
         except ValueError as e:
@@ -408,7 +409,7 @@ For advanced usage, use snmpsim-command-responder directly.
         except ImportError as e:
             print(f"Error: Missing dependencies for ifXTable simulation: {e}")
             return 1
-        except (IOError, ValueError, AttributeError) as e:
+        except (OSError, ValueError, AttributeError) as e:
             print(f"Error loading ifXTable configuration: {e}")
             return 1
 

@@ -6,13 +6,14 @@ This script runs comprehensive tests across all Docker containers
 to validate SNMPv3 security, REST API, and State Machine functionality.
 """
 
-import time
-import requests
+import json
 import subprocess
 import sys
-import json
-from typing import Dict, List, Any
+import time
 from pathlib import Path
+from typing import Any, Dict, List
+
+import requests
 
 
 class DockerTestSuite:

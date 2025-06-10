@@ -8,15 +8,16 @@ Comprehensive Performance Test for SNMP simulator to verify PRD requirements:
 - Various scenario testing
 """
 
-import subprocess
-import time
-import statistics
-import psutil
-import os
-import sys
 import argparse
+import os
+import statistics
+import subprocess
+import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+
+import psutil
 
 
 def quick_snmp_request(request_id):

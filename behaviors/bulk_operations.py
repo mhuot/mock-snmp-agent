@@ -6,11 +6,11 @@ This module provides comprehensive GetBulk operation testing capabilities
 including large table simulation, PDU size management, and bandwidth testing.
 """
 
-import time
 import random
-from typing import Dict, List, Optional, Tuple
+import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass

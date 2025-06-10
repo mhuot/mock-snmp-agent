@@ -6,8 +6,8 @@ This script demonstrates Docker functionality without long build times.
 """
 
 import subprocess
-import time
 import sys
+import time
 from pathlib import Path
 
 

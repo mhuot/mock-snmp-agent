@@ -12,11 +12,11 @@ Simulates:
 - Engine discovery failures (wrong engine ID, boot counter issues)
 """
 
+import logging
 import random
 import time
-import logging
-from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass

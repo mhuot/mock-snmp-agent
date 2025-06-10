@@ -149,7 +149,7 @@ class SimulationScenarioManager:
         scenarios_file = self.data_dir / "scenarios.json"
         if scenarios_file.exists():
             try:
-                with open(scenarios_file, "r", encoding="utf-8") as f:
+                with open(scenarios_file, encoding="utf-8") as f:
                     data = json.load(f)
                     for scenario_data in data:
                         scenario = TestScenario(**scenario_data)

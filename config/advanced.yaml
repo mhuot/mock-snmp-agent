@@ -10,36 +10,36 @@ simulation:
       deviation: 10            # +/- 10ms random variation
       oid_specific:
         # System description OID - slower response
-        "1.3.6.1.2.1.1.1.0": 
+        "1.3.6.1.2.1.1.1.0":
           delay: 2000          # 2 second delay
           deviation: 500       # +/- 500ms variation
         # Interface table - medium delay
         "1.3.6.1.2.1.2.2.1":
           delay: 200
           deviation: 50
-    
+
     # Random response dropping
     drops:
       enabled: true
       rate: 5                  # Drop 5% of requests
-    
+
     # Packet loss simulation
     packet_loss:
       enabled: false           # Disabled in this example
       rate: 2                  # Would drop 2% of packets
-    
+
     # Agent restart simulation
     restart:
       enabled: false
       interval: 300            # Restart every 5 minutes
-  
+
   # Request/Response logging
   logging:
     enabled: true
     level: info
     file: "logs/snmp-agent.log"
     format: json               # json, csv, or text
-  
+
   # Metrics collection and export
   metrics:
     enabled: true

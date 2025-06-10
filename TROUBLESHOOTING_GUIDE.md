@@ -123,7 +123,7 @@ iostat 1
    ```bash
    # Monitor during operation
    top -p $(pgrep -f mock_snmp_agent)
-   
+
    # Increase system limits if needed
    ulimit -n 65536  # File descriptors
    ```
@@ -225,7 +225,7 @@ python -m memory_profiler mock_snmp_agent.py
    ```bash
    # Use absolute paths
    python mock_snmp_agent.py --config /full/path/to/config.yaml
-   
+
    # Check current directory
    pwd
    ls -la config/
@@ -235,7 +235,7 @@ python -m memory_profiler mock_snmp_agent.py
    ```bash
    # Validate YAML
    python -c "import yaml; print(yaml.safe_load(open('config.yaml')))"
-   
+
    # Use online YAML validator
    yamllint config.yaml
    ```
@@ -246,7 +246,7 @@ python -m memory_profiler mock_snmp_agent.py
    def validate_config(config_file):
        with open(config_file) as f:
            config = yaml.safe_load(f)
-       
+
        required_keys = ['simulation', 'logging']
        for key in required_keys:
            if key not in config:
@@ -354,7 +354,7 @@ docker run -it --rm mock-snmp-agent:latest bash
    ```bash
    # Rebuild with no cache
    docker build --no-cache -t mock-snmp-agent .
-   
+
    # Check Dockerfile syntax
    docker build --dry-run .
    ```
@@ -377,7 +377,7 @@ docker run -it --rm mock-snmp-agent:latest bash
    ```bash
    # Test from host
    snmpget -v2c -c public localhost:11611 1.3.6.1.2.1.1.1.0
-   
+
    # Test from another container
    docker run --network container:mock-snmp-agent alpine ping localhost
    ```

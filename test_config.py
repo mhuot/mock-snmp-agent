@@ -3,8 +3,8 @@
 Test configuration functionality for Mock SNMP Agent.
 """
 
-import tempfile
 import os
+import tempfile
 from pathlib import Path
 
 
@@ -70,7 +70,7 @@ def test_snmprec_generation():
         output_file = Path(output_dir) / "test.snmprec"
         assert output_file.exists()
 
-        with open(output_file, "r") as f:
+        with open(output_file) as f:
             content = f.read()
 
         # Should contain delay tags
@@ -81,8 +81,9 @@ def test_snmprec_generation():
 
 def test_cli_behavior():
     """Test CLI behavior shortcuts."""
-    from mock_snmp_agent import main
     import sys
+
+    from mock_snmp_agent import main
 
     # Test delay argument parsing
     sys.argv = ["mock-snmp-agent", "--delay", "200", "--help"]

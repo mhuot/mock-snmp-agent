@@ -6,14 +6,14 @@ This module provides advanced query capabilities for OIDs, metrics,
 and historical data access.
 """
 
-import time
 import json
-from typing import List, Dict, Any, Optional
+import time
+from collections import defaultdict, deque
 from datetime import datetime, timedelta
 from pathlib import Path
-from collections import defaultdict, deque
+from typing import Any, Dict, List, Optional
 
-from fastapi import Query, HTTPException
+from fastapi import HTTPException, Query
 from pydantic import BaseModel, Field
 
 

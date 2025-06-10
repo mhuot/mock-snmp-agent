@@ -6,18 +6,18 @@ Tests for WebSocket functionality including connection management,
 message broadcasting, and real-time data streaming.
 """
 
-import pytest
 import asyncio
 import json
 import time
-from unittest.mock import Mock, AsyncMock, patch
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+from unittest.mock import AsyncMock, Mock, patch
 
+import pytest
 import websockets
 from websockets.exceptions import ConnectionClosed
 
-from rest_api.websocket import ConnectionManager, manager, MetricsCollector
 from rest_api.controllers import MockSNMPAgentController
+from rest_api.websocket import ConnectionManager, MetricsCollector, manager
 
 
 class MockWebSocket:

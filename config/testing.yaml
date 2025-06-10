@@ -8,29 +8,29 @@ simulation:
       enabled: true
       global_delay: 500        # 500ms base delay
       deviation: 200           # High variation (+/- 200ms)
-    
+
     # Simulate unreliable agent
     drops:
       enabled: true
       rate: 20                 # Drop 20% of requests
-    
+
     # Simulate network issues
     packet_loss:
       enabled: true
       rate: 10                 # 10% packet loss
-    
+
     # Simulate agent instability
     restart:
       enabled: true
       interval: 60             # Restart every minute
-  
+
   # Enable logging for debugging
   logging:
     enabled: true
     level: debug
     file: "logs/test-debug.log"
     format: text
-  
+
   # Disable metrics for testing
   metrics:
     enabled: false

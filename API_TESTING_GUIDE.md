@@ -49,7 +49,7 @@ python run_api_tests.py all --coverage
 # API endpoint tests only
 python run_api_tests.py endpoints
 
-# WebSocket tests only  
+# WebSocket tests only
 python run_api_tests.py websockets
 
 # Scenario management tests
@@ -163,15 +163,15 @@ from locust import HttpUser, task, between
 
 class APIUser(HttpUser):
     wait_time = between(1, 3)
-    
+
     @task(3)
     def test_health(self):
         self.client.get("/health")
-    
-    @task(2) 
+
+    @task(2)
     def test_metrics(self):
         self.client.get("/metrics")
-    
+
     @task(1)
     def test_scenarios(self):
         self.client.get("/simulation/scenarios")
@@ -259,7 +259,7 @@ def test_new_endpoint(self, client):
     """Test new API endpoint."""
     response = client.get("/new-endpoint")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert "expected_field" in data
     assert isinstance(data["expected_field"], str)
@@ -273,12 +273,12 @@ async def test_new_websocket(self, connection_manager):
     """Test new WebSocket functionality."""
     mock_ws = MockWebSocket()
     await connection_manager.connect(mock_ws, "new_channel")
-    
+
     await connection_manager.broadcast_to_channel(
-        "new_channel", 
+        "new_channel",
         {"type": "test_message", "data": "test"}
     )
-    
+
     assert len(mock_ws.messages) == 1
     assert mock_ws.messages[0]["type"] == "test_message"
 ```
@@ -303,7 +303,7 @@ def test_unit_functionality():
     """Unit test."""
     pass
 
-@pytest.mark.api  
+@pytest.mark.api
 def test_api_endpoint():
     """API endpoint test."""
     pass
@@ -358,12 +358,12 @@ pytest tests/ -x
 def test_with_debugging(client):
     """Test with debugging info."""
     response = client.get("/health")
-    
+
     # Debug information
     print(f"Status: {response.status_code}")
     print(f"Headers: {response.headers}")
     print(f"Body: {response.text}")
-    
+
     assert response.status_code == 200
 ```
 

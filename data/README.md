@@ -5,7 +5,7 @@ This directory contains custom SNMP simulation data files that override the buil
 ## File Formats Supported
 
 - **`.snmprec`**: Native snmpsim recording format
-- **`.snmpwalk`**: Standard snmpwalk output format  
+- **`.snmpwalk`**: Standard snmpwalk output format
 - **`.sapwalk`**: SAP-specific walk format
 
 ## Community Name Mapping
@@ -43,7 +43,7 @@ Create a `.snmprec` file with format: `OID|TYPE|VALUE`
 
 #### Type Codes
 - `2`: INTEGER
-- `4`: OCTET STRING  
+- `4`: OCTET STRING
 - `6`: OBJECT IDENTIFIER
 - `64`: IP ADDRESS
 - `65`: COUNTER32
@@ -62,7 +62,7 @@ Add special behaviors by using variation modules:
 
 ### Error Simulation
 ```
-# File: error-test.snmprec  
+# File: error-test.snmprec
 1.3.6.1.2.1.1.1.0|4:error|status=authorizationError
 ```
 

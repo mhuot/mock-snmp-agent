@@ -5,10 +5,10 @@ Port Cleanup Utility
 Cleans up any processes using SNMP and API ports before running tests.
 """
 
-import subprocess
-import sys
 import os
 import signal
+import subprocess
+import sys
 
 
 def kill_processes_on_port(port):

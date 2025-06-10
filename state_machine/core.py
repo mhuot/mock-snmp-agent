@@ -7,12 +7,12 @@ lifecycle simulation in the Mock SNMP Agent.
 """
 
 import logging
-import time
-import threading
 import random
-from typing import Dict, List, Optional, Any, Callable
+import threading
+import time
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
 
 
 class TransitionTrigger(str, Enum):

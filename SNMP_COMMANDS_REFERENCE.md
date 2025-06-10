@@ -12,7 +12,7 @@ This reference provides common SNMP command examples used throughout the Mock SN
 # Basic SNMPv2c GET operation
 snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 
-# SNMPv1 GET operation  
+# SNMPv1 GET operation
 snmpget -v1 -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 
 # GETNEXT operation

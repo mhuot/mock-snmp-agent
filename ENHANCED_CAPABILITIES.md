@@ -15,7 +15,7 @@ The agent now simulates AgentX (SNMP Extension Agent) behavior patterns commonly
 #### Features:
 - **Subagent Registration Delays**: Simulates the delay when subagents register with the master agent
 - **OID-Specific Delays**: Different response times based on MIB subsystem (interfaces, routing, hardware)
-- **Connection Failures**: Simulates subagent disconnection and reconnection scenarios  
+- **Connection Failures**: Simulates subagent disconnection and reconnection scenarios
 - **Master Agent Timeouts**: Occasional timeout conditions during subagent communication
 
 #### Configuration Example:
@@ -39,7 +39,7 @@ python mock_snmp_agent.py --config config/enhanced_simulation.yaml
 # Interface queries (medium delay ~200ms)
 snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.2.2.1.10.1
 
-# Host resources (slow delay ~800ms)  
+# Host resources (slow delay ~800ms)
 snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.25.1.1.0
 
 # Enterprise MIBs (very slow ~1200ms)
@@ -48,7 +48,7 @@ snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.4.1.9.2.1.1.0
 
 ### 🔐 SNMPv3 Context Handling
 
-**Status: ✅ FULLY IMPLEMENTED** 
+**Status: ✅ FULLY IMPLEMENTED**
 
 The agent now supports SNMPv3 contexts, allowing different OID trees and values based on the context name in requests. This is essential for testing VRF-aware devices and multi-tenant systems.
 
@@ -125,7 +125,7 @@ snmpwalk -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1
 # Request missing object (noSuchObject)
 snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1.8.0
 
-# Request missing table instance (noSuchInstance)  
+# Request missing table instance (noSuchInstance)
 snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.2.2.1.1.3
 ```
 
@@ -258,7 +258,7 @@ simulation:
 - [ ] Validate connection failure handling
 - [ ] Measure realistic delay patterns
 
-### ✅ SNMPv3 Context Testing  
+### ✅ SNMPv3 Context Testing
 - [ ] Test multiple context access
 - [ ] Verify context-based access control
 - [ ] Validate context-specific OID values
@@ -311,9 +311,9 @@ curl -X PUT http://localhost:8080/config \
 
 The Mock SNMP Agent now provides comprehensive advanced simulation capabilities that directly address your requirements:
 
-✅ **AgentX-style slow responses** - Full implementation with configurable subagent delays  
-✅ **SNMPv3 context handling** - Complete context support with access control  
-✅ **endOfMibView response injection** - Comprehensive MIB boundary simulation  
+✅ **AgentX-style slow responses** - Full implementation with configurable subagent delays
+✅ **SNMPv3 context handling** - Complete context support with access control
+✅ **endOfMibView response injection** - Comprehensive MIB boundary simulation
 
 These enhancements make the Mock SNMP Agent suitable for testing complex enterprise network monitoring scenarios, including VRF-aware devices, multi-tenant systems, and realistic AgentX-based network equipment.
 

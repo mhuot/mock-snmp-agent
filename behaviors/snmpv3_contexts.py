@@ -7,8 +7,8 @@ OID trees and data sets to be served based on the context name in SNMPv3 request
 """
 
 import logging
-from typing import Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Set, Tuple
 
 
 @dataclass

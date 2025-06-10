@@ -16,7 +16,7 @@ The simulator supports multiple community strings for different simulation scena
 ### Variation Communities
 
 - **`variation/delay`**: Responses with configurable delays
-- **`variation/error`**: Various SNMP error responses  
+- **`variation/error`**: Various SNMP error responses
 - **`variation/writecache`**: Writeable OIDs for SET operations
 - **`variation/notification`**: Trap and inform generation
 
@@ -71,7 +71,7 @@ Test error handling in your SNMP applications using the `variation/error` commun
 # Trigger authorization error
 snmpget -v2c -c variation/error 127.0.0.1:11611 1.3.6.1.2.1.2.2.1.1.1
 
-# Trigger no-access error  
+# Trigger no-access error
 snmpget -v2c -c variation/error 127.0.0.1:11611 1.3.6.1.2.1.2.2.1.6.1
 ```
 
@@ -85,10 +85,10 @@ simulation:
     error_rate: 15         # 15% of requests return errors
     error_types:
       - "noSuchName"       # 40% of errors
-      - "authorizationError" # 30% of errors  
+      - "authorizationError" # 30% of errors
       - "noAccess"         # 20% of errors
       - "genErr"           # 10% of errors
-    
+
     # OID-specific errors
     oid_errors:
       "1.3.6.1.2.1.1.4.0": "noAccess"        # sysContact always fails
@@ -194,21 +194,21 @@ agent:
         priv_protocol: "AES"
         priv_key: "admin_priv_key_456"
         context: "admin_context"
-      
+
       - username: "monitor"
-        auth_protocol: "MD5"  
+        auth_protocol: "MD5"
         auth_key: "monitor_auth_789"
         priv_protocol: "DES"
         priv_key: "monitor_priv_012"
         context: "public"
-      
+
       - username: "readonly"
         auth_protocol: "SHA"
         auth_key: "readonly_key_345"
         priv_protocol: null  # No privacy
         priv_key: null
         context: "public"
-      
+
       - username: "noauth"
         auth_protocol: null  # No authentication
         auth_key: null
@@ -282,39 +282,39 @@ import random
 def generate_interface_data(num_interfaces=24):
     """Generate dynamic interface table data."""
     data = []
-    
+
     for i in range(1, num_interfaces + 1):
         # Interface description
         data.append(f"1.3.6.1.2.1.2.2.1.2.{i}|4|GigabitEthernet0/{i}")
-        
+
         # Interface type (ethernetCsmacd = 6)
         data.append(f"1.3.6.1.2.1.2.2.1.3.{i}|2|6")
-        
+
         # Interface MTU
         data.append(f"1.3.6.1.2.1.2.2.1.4.{i}|2|1500")
-        
+
         # Interface speed (1 Gbps = 1000000000)
         data.append(f"1.3.6.1.2.1.2.2.1.5.{i}|66|1000000000")
-        
+
         # Interface admin status (up = 1)
         data.append(f"1.3.6.1.2.1.2.2.1.7.{i}|2|1")
-        
+
         # Interface operational status (up = 1, down = 2)
         status = 1 if random.random() > 0.1 else 2  # 90% up
         data.append(f"1.3.6.1.2.1.2.2.1.8.{i}|2|{status}")
-        
+
         # Interface counters (random values)
         in_octets = random.randint(1000000, 4000000000)
         out_octets = random.randint(1000000, 4000000000)
         data.append(f"1.3.6.1.2.1.2.2.1.10.{i}|65|{in_octets}")
         data.append(f"1.3.6.1.2.1.2.2.1.16.{i}|65|{out_octets}")
-    
+
     return data
 
 if __name__ == "__main__":
     # Generate data for a 24-port switch
     interface_data = generate_interface_data(24)
-    
+
     # Write to file
     with open("data/custom/switch24port.snmprec", "w") as f:
         # System information
@@ -325,11 +325,11 @@ if __name__ == "__main__":
         f.write("1.3.6.1.2.1.1.5.0|4|SWITCH-24P-01\\n")
         f.write("1.3.6.1.2.1.1.6.0|4|Network Closet B\\n")
         f.write("1.3.6.1.2.1.2.1.0|2|24\\n")
-        
+
         # Interface data
         for line in interface_data:
             f.write(line + "\\n")
-        
+
     print("Generated switch24port.snmprec with 24 interfaces")
 ```
 
@@ -396,18 +396,18 @@ port=11611
 
 for scenario in "${scenarios[@]}"; do
     echo "Testing scenario: $scenario"
-    
+
     # Start agent with scenario config
     python mock_snmp_agent.py --config "config/${scenario}.yaml" --port $port &
     agent_pid=$!
-    
+
     # Wait for agent to start
     sleep 2
-    
+
     # Run tests
     echo "Running SNMP tests..."
     snmpwalk -v2c -c public 127.0.0.1:$port 1.3.6.1.2.1.1 > "results/${scenario}_walk.txt"
-    
+
     # Performance test
     echo "Running performance test..."
     time_start=$(date +%s%N)
@@ -417,11 +417,11 @@ for scenario in "${scenarios[@]}"; do
     time_end=$(date +%s%N)
     avg_time=$(( (time_end - time_start) / 100000000 ))
     echo "Average response time: ${avg_time}ms" > "results/${scenario}_perf.txt"
-    
+
     # Stop agent
     kill $agent_pid
     wait $agent_pid 2>/dev/null
-    
+
     echo "Scenario $scenario completed"
     echo "---"
 done
@@ -446,15 +446,15 @@ class SNMPTester:
         self.port = port
         self.community = community
         self.api_base = f"http://{host}:8080"
-    
+
     def start_agent_with_config(self, config_file):
         """Start agent with specific configuration."""
-        cmd = ['python', 'mock_snmp_agent.py', 
-               '--config', config_file, 
+        cmd = ['python', 'mock_snmp_agent.py',
+               '--config', config_file,
                '--port', str(self.port),
                '--rest-api', '--api-port', '8080']
         return subprocess.Popen(cmd)
-    
+
     def snmp_get(self, oid):
         """Perform SNMP GET operation."""
         for (errorIndication, errorStatus, errorIndex, varBinds) in nextCmd(
@@ -464,7 +464,7 @@ class SNMPTester:
             ContextData(),
             ObjectType(ObjectIdentity(oid)),
             lexicographicMode=False, maxRows=1):
-            
+
             if errorIndication:
                 return None, str(errorIndication)
             elif errorStatus:
@@ -472,17 +472,17 @@ class SNMPTester:
             else:
                 for varBind in varBinds:
                     return varBind[1], None
-    
+
     def test_scenario(self, config_file, tests):
         """Test a complete scenario."""
         print(f"Testing scenario: {config_file}")
-        
+
         # Start agent
         agent_proc = self.start_agent_with_config(config_file)
         time.sleep(3)  # Wait for startup
-        
+
         results = {}
-        
+
         try:
             # Wait for API to be ready
             for _ in range(10):
@@ -492,19 +492,19 @@ class SNMPTester:
                         break
                 except:
                     time.sleep(1)
-            
+
             # Run tests
             for test_name, oid in tests.items():
                 start_time = time.time()
                 value, error = self.snmp_get(oid)
                 end_time = time.time()
-                
+
                 results[test_name] = {
                     'value': str(value) if value else None,
                     'error': error,
                     'response_time': (end_time - start_time) * 1000  # ms
                 }
-            
+
             # Get API metrics
             try:
                 response = requests.get(f"{self.api_base}/metrics")
@@ -512,17 +512,17 @@ class SNMPTester:
                     results['api_metrics'] = response.json()
             except:
                 pass
-        
+
         finally:
             # Stop agent
             agent_proc.terminate()
             agent_proc.wait()
-        
+
         return results
 
 def main():
     tester = SNMPTester()
-    
+
     # Define test scenarios
     scenarios = {
         'config/simple.yaml': {
@@ -540,25 +540,25 @@ def main():
             'sysLocation': '1.3.6.1.2.1.1.6.0'  # Configured to fail
         }
     }
-    
+
     # Run all scenarios
     all_results = {}
     for config, tests in scenarios.items():
         results = tester.test_scenario(config, tests)
         all_results[config] = results
-        
+
         # Print summary
         print(f"\\nResults for {config}:")
         for test_name, result in results.items():
             if test_name != 'api_metrics':
                 status = "OK" if result['error'] is None else "ERROR"
                 print(f"  {test_name}: {status} ({result['response_time']:.1f}ms)")
-    
+
     # Save detailed results
     import json
     with open('test_results.json', 'w') as f:
         json.dump(all_results, f, indent=2, default=str)
-    
+
     print("\\nDetailed results saved to test_results.json")
 
 if __name__ == "__main__":
@@ -575,11 +575,11 @@ simulation:
   # Minimal delays for maximum throughput
   delay:
     enabled: false
-  
+
   # No error injection
   error_injection:
     enabled: false
-  
+
   # High resource limits
   resource_limits:
     enabled: true
@@ -592,7 +592,7 @@ agent:
     worker_threads: 8
     connection_pool_size: 200
     response_cache_size: 1000
-    
+
 # Enable API for monitoring performance
 api:
   enabled: true

@@ -15,14 +15,14 @@ from typing import Any, Dict, List, Optional
 import psutil
 
 from .models import (
-    HealthStatus,
-    HealthResponse,
-    MetricsResponse,
-    ConfigurationResponse,
     AgentStatus,
     AgentStatusResponse,
-    RestartResponse,
+    ConfigurationResponse,
+    HealthResponse,
+    HealthStatus,
+    MetricsResponse,
     OIDListResponse,
+    RestartResponse,
 )
 
 
@@ -296,7 +296,7 @@ class MockSNMPAgentController:
                 data_sources.append(snmprec_file.name)
 
                 try:
-                    with open(snmprec_file, "r", encoding="utf-8") as f:
+                    with open(snmprec_file, encoding="utf-8") as f:
                         for line in f:
                             line = line.strip()
                             if line and not line.startswith("#"):

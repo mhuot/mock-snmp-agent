@@ -37,7 +37,7 @@ This plan outlines the implementation of comprehensive ifXTable simulation with 
 class CounterConfig:
     counter_type: str  # "32bit", "64bit", "gauge"
     max_value: int     # 2^32-1 or 2^64-1
-    
+
 class CounterWrapSimulator:
     def get_hc_current_value(self, oid: str) -> int:
         """Get 64-bit high capacity counter value"""
@@ -48,11 +48,11 @@ class CounterWrapSimulator:
 # File: behaviors/ifxtable.py (New)
 class IfXTableSimulator:
     """Complete ifXTable simulation with all 18 OIDs"""
-    
+
     def __init__(self):
         self.interfaces = {}  # Interface definitions
         self.counters = {}    # Counter states
-        
+
     def generate_ifxtable_snmprec(self) -> List[str]:
         """Generate .snmprec entries for ifXTable"""
 ```
@@ -63,7 +63,7 @@ class IfXTableSimulator:
 class InterfaceDefinition:
     index: int
     name: str                    # ifName
-    alias: str                   # ifAlias  
+    alias: str                   # ifAlias
     type: str                    # ifType
     speed_mbps: int             # ifHighSpeed
     admin_status: str           # ifAdminStatus
@@ -111,17 +111,17 @@ class InterfaceDefinition:
 # File: behaviors/interface_engine.py (New)
 class InterfaceStateEngine:
     """Manages dynamic interface state changes"""
-    
+
     def __init__(self):
         self.interfaces = {}
         self.state_transitions = {}
-        
+
     def simulate_link_flap(self, interface_index: int):
         """Simulate interface going down and back up"""
-        
+
     def change_interface_speed(self, interface_index: int, new_speed: int):
         """Simulate speed negotiation changes"""
-        
+
     def apply_utilization_pattern(self, pattern_name: str):
         """Apply traffic utilization patterns"""
 ```
@@ -130,7 +130,7 @@ class InterfaceStateEngine:
 ```python
 class TrafficPatternEngine:
     """Realistic traffic pattern simulation"""
-    
+
     PATTERNS = {
         'business_hours': {
             'peak_hours': [9, 10, 11, 14, 15, 16],
@@ -154,11 +154,11 @@ class TrafficPatternEngine:
 ```python
 class HighCapacityCounter:
     """64-bit counter with proper overflow handling"""
-    
+
     def __init__(self, initial_value: int = 0):
         self.value = initial_value
         self.max_value = 2**64 - 1  # 18,446,744,073,709,551,615
-        
+
     def increment(self, amount: int) -> int:
         """Increment counter with wrap detection"""
         old_value = self.value
@@ -196,7 +196,7 @@ interfaces:
         unicast: 0.8
         multicast: 0.15
         broadcast: 0.05
-        
+
   server_connections:
     - index: 10
       name: "TenGigabitEthernet1/1"
@@ -206,13 +206,13 @@ interfaces:
       admin_status: "up"
       oper_status: "up"
       utilization_pattern: "constant_high"
-      
+
 simulation_scenarios:
   link_flap_test:
     interfaces: [1, 2, 3]
     flap_interval: 300  # seconds
     down_duration: 30   # seconds
-    
+
   speed_change_test:
     interface: 1
     speed_sequence: [100, 1000, 10000]  # Mbps
@@ -260,13 +260,13 @@ async def websocket_interface_events(websocket: WebSocket):
 ```python
 class AdvancedTrafficSimulator:
     """Sophisticated traffic pattern simulation"""
-    
+
     def apply_time_of_day_pattern(self, interface_index: int):
         """Apply realistic daily utilization curves"""
-        
+
     def simulate_traffic_burst(self, interface_index: int, duration: int):
         """Simulate traffic bursts and congestion"""
-        
+
     def correlate_interface_traffic(self, primary_idx: int, backup_idx: int):
         """Simulate primary/backup link relationships"""
 ```
@@ -275,7 +275,7 @@ class AdvancedTrafficSimulator:
 ```python
 class ErrorSimulation:
     """Realistic error and discard simulation"""
-    
+
     def __init__(self):
         self.error_patterns = {
             'fiber_degradation': {'rate': 0.01, 'pattern': 'increasing'},

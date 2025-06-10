@@ -13,11 +13,12 @@ Prerequisites:
     - requests library: pip install requests
 """
 
-import requests
 import json
-import time
 import sys
-from typing import Dict, Any
+import time
+from typing import Any, Dict
+
+import requests
 
 
 class MockSNMPAgentAPIClient:

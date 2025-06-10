@@ -6,11 +6,11 @@ This example demonstrates how to perform load testing against the Mock SNMP Agen
 to measure performance characteristics under various loads.
 """
 
+import statistics
 import subprocess
 import sys
-import time
-import statistics
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 

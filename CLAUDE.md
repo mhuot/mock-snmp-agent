@@ -196,3 +196,68 @@ make docker-test      # Test Docker image functionality
 # Cleanup
 make clean           # Remove build artifacts, cache, and temporary files
 ```
+
+## Claude Memory Integration for Recurring Issues
+
+### Pre-Development Checklist (ALWAYS RUN BEFORE CHANGES)
+**Claude MUST run these commands before making ANY code changes:**
+```bash
+# 1. MANDATORY: Check for running processes on common ports
+python cleanup_ports.py
+
+# 2. MANDATORY: Format all Python code before editing
+black .
+
+# 3. MANDATORY: Run basic pylint check
+make lint
+
+# 4. MANDATORY: Verify REST API server module exists
+python -c "import rest_api.server; print('REST API server module OK')"
+```
+
+### Post-Development Validation (ALWAYS RUN AFTER CHANGES)
+**Claude MUST run these commands after making ANY code changes:**
+```bash
+# 1. MANDATORY: Format and lint all changed files
+black . && make lint
+
+# 2. MANDATORY: Test REST API server startup
+python -c "from rest_api.server import app; print('REST API server imports OK')"
+
+# 3. MANDATORY: Quick smoke test
+python mock_snmp_agent.py --help > /dev/null && echo "CLI OK"
+
+# 4. MANDATORY: Clean up any test processes
+python cleanup_ports.py
+```
+
+### Known Problematic Patterns to AVOID
+1. **Import Issues**: Never import Path twice in same file
+2. **Exception Handling**: Always use specific exceptions, never `except Exception:`
+3. **Docker Packages**: Avoid `snmp-mibs-downloader`, `net-snmp-utils`, `docker.io`
+4. **Process Management**: Always use try/finally blocks for process cleanup
+5. **Port Conflicts**: Always check ports before starting services
+6. **Module Structure**: Ensure `rest_api/__main__.py` exists for `python -m` commands
+
+### Docker Build Validation
+**Before committing Docker changes, Claude MUST test:**
+```bash
+# Test all Docker configurations
+docker build -f Dockerfile .
+docker build -f Dockerfile.enhanced .
+docker build -f Dockerfile.test-runner .
+```
+
+### Common Error Patterns to Remember
+- **Pylint failures**: Usually formatting (black), imports, or broad exceptions
+- **REST API failures**: Missing `__main__.py` or app export issues
+- **Docker failures**: Invalid package names or missing dependencies
+- **Test failures**: Port conflicts or timing issues (use 10+ second delays)
+- **CI failures**: YAML import errors or dependency installation problems
+
+### Emergency Fixes
+If recurring issues appear, Claude should immediately:
+1. Run `python cleanup_ports.py` to clear port conflicts
+2. Run `black . && make lint` to fix formatting
+3. Check `rest_api/__main__.py` exists with proper app export
+4. Verify all Docker package names are valid for Ubuntu

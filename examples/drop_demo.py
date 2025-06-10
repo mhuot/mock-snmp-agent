@@ -7,8 +7,8 @@ and packet loss for testing SNMP client retry logic.
 """
 
 import subprocess
-import time
 import sys
+import time
 from pathlib import Path
 
 # Add parent directory to path to import modules

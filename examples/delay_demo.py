@@ -6,11 +6,11 @@ This example demonstrates how to use delay simulation to test SNMP client
 timeout handling and latency behavior.
 """
 
-import subprocess
-import time
-import signal
-import sys
 import os
+import signal
+import subprocess
+import sys
+import time
 from pathlib import Path
 
 # Add parent directory to path to import modules

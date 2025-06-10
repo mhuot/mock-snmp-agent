@@ -8,7 +8,7 @@ simulation:
       enabled: false
       global_delay: 0
       deviation: 0
-    
+
     snmpv3_security:
       enabled: false
 
@@ -17,7 +17,7 @@ simulation:
     enabled: true
     host: "127.0.0.1"
     port: 8080
-    
+
     # CORS configuration for web browser access
     cors:
       enabled: true
@@ -26,7 +26,7 @@ simulation:
         # For production, specify exact origins:
         # - "http://localhost:3000"
         # - "https://monitoring.example.com"
-    
+
     # Authentication (optional)
     auth:
       enabled: false

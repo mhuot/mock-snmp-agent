@@ -13,12 +13,12 @@ Prerequisites:
     - net-snmp tools installed (snmpget, snmpwalk, etc.)
 """
 
+import json
 import subprocess
 import sys
 import time
-import json
 from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple
 
 
 class SNMPv3SecurityDemo:

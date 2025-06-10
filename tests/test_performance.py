@@ -1,10 +1,11 @@
 """Performance tests for Mock SNMP Agent."""
 
-import pytest
+import statistics
 import subprocess
 import time
-import statistics
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import pytest
 
 
 class TestPerformance:

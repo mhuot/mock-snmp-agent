@@ -11,7 +11,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -38,10 +38,10 @@ jobs:
       run: |
         # Get the tag name
         TAG_NAME=${GITHUB_REF#refs/tags/}
-        
+
         # Get the previous tag
         PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-        
+
         # Generate changelog
         if [ -n "$PREV_TAG" ]; then
           echo "## Changes since $PREV_TAG" > CHANGELOG.md
@@ -50,7 +50,7 @@ jobs:
           echo "## Initial Release" > CHANGELOG.md
           echo "- First release of Mock SNMP Agent" >> CHANGELOG.md
         fi
-        
+
         # Set output for use in release
         echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
 

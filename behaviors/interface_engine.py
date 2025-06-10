@@ -7,15 +7,15 @@ link state changes, speed negotiation, and event-driven behavior.
 """
 
 import asyncio
-import time
-import threading
 import random
-from typing import Dict, List, Optional, Callable, Any
+import threading
+import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
 
-from .ifxtable import IfXTableSimulator, InterfaceDefinition, AdminStatus, OperStatus
+from .ifxtable import AdminStatus, IfXTableSimulator, InterfaceDefinition, OperStatus
 
 
 class StateChangeEvent(Enum):

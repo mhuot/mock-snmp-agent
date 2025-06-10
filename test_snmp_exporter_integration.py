@@ -6,17 +6,18 @@ Tests the integration between Mock SNMP Agent and Prometheus SNMP Exporter
 to validate that all PRD requirements for SNMP monitoring are met.
 """
 
-import subprocess
-import time
-import sys
+import json
 import os
+import subprocess
+import sys
+import tempfile
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import requests
 import yaml
-import json
-import tempfile
-from pathlib import Path
-from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
 
 
 @dataclass
@@ -215,8 +216,8 @@ class SNMPExporterIntegrationTester:
         """Download SNMP Exporter if not available"""
         try:
             import platform
-            import urllib.request
             import tarfile
+            import urllib.request
 
             # Determine architecture
             system = platform.system().lower()

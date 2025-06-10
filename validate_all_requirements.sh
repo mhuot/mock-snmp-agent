@@ -1,6 +1,6 @@
 #!/bin/bash
 # Complete PRD Requirements Validation Script
-# 
+#
 # This script runs all available tests to validate that the Mock SNMP Agent
 # meets all Product Requirements Document (PRD) requirements.
 
@@ -114,7 +114,7 @@ if command -v docker >/dev/null 2>&1; then
         # Check if Docker daemon is running
         if docker info >/dev/null 2>&1; then
             echo "Testing Docker Compose integration..."
-            
+
             # Test basic Docker startup with SNMP test instead of REST API
             if timeout 60 bash -c '
                 docker compose up -d && sleep 15 &&
@@ -157,19 +157,19 @@ if [ "$OVERALL_SUCCESS" = true ]; then
     echo ""
     echo "The Mock SNMP Agent fully meets all PRD requirements."
     echo "Ready for production use with Prometheus SNMP Exporter."
-    
+
     # Create success marker file
     echo "SUCCESS: All PRD requirements validated at $TIMESTAMP" > test-reports/validation-success.txt
-    
+
     exit 0
 else
     echo ""
     echo "❌ SOME REQUIREMENTS NOT MET"
     echo "Please review the failed tests above and address any issues."
     echo "Check individual test reports in test-reports/ directory for details."
-    
+
     # Create failure marker file
     echo "FAILURE: Some requirements not met at $TIMESTAMP" > test-reports/validation-failure.txt
-    
+
     exit 1
 fi

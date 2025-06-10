@@ -10,7 +10,7 @@
 # Before
 except (yaml.YAMLError, ValueError) as e:  # ❌ yaml not imported
 
-# After  
+# After
 try:
     from config import SimulationConfig
     import yaml
@@ -123,7 +123,7 @@ python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 # Before
 key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements-dev.txt') }}
 
-# After  
+# After
 key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
 ```
 

@@ -152,7 +152,7 @@ services:
       - DEVICE_TYPE=router
     volumes:
       - ./config/router.yaml:/app/config/config.yaml
-  
+
   snmp-agent-2:
     build: .
     ports:
@@ -265,7 +265,7 @@ def run_load_test():
         {"requests": 500, "workers": 50, "name": "medium"},
         {"requests": 1000, "workers": 100, "name": "heavy"}
     ]
-    
+
     for scenario in scenarios:
         print(f"Running {scenario['name']} load test...")
         result = performance_test(**scenario)
@@ -323,11 +323,11 @@ alerts:
   high_latency:
     condition: "avg_latency > 100ms for 5 minutes"
     severity: "warning"
-  
+
   high_error_rate:
     condition: "error_rate > 5% for 2 minutes"
     severity: "critical"
-  
+
   memory_usage:
     condition: "memory_usage > 80% for 10 minutes"
     severity: "warning"

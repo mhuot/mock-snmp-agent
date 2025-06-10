@@ -19,7 +19,7 @@
 
 #### Performance Testing (Merge 3 → 1)
 **Keep:** `performance_test.py` (most comprehensive)
-**Remove:** 
+**Remove:**
 - `quick_performance_test.py` (redundant - subset of performance_test.py)
 - `simple_prd_test.py` (redundant - similar functionality)
 
@@ -123,13 +123,13 @@
 
 ### Immediate Actions Required:
 1. **Audit current script usage** - ✅ COMPLETED - Found 15+ references that need updating
-2. **Create backup branch** - `git checkout -b script-consolidation-backup` before making changes  
+2. **Create backup branch** - `git checkout -b script-consolidation-backup` before making changes
 3. **Test current functionality** - Run all scripts to establish baseline functionality
 
 ### Critical References Found (Must Update):
 **CI/CD Workflows:**
 - `.github/workflows/release.yml` - References `test_basic.py`
-- `.github/workflows/ci.yml` - References `test_basic.py` 
+- `.github/workflows/ci.yml` - References `test_basic.py`
 
 **Documentation:**
 - `CLAUDE.md` - References `test_basic.py`
@@ -150,7 +150,7 @@
 2. **Test baseline functionality**: Ensure all scripts work before changes
 3. **Create replacement mapping**: Document exact command equivalents
 
-#### Phase B: Enhancement (High Priority)  
+#### Phase B: Enhancement (High Priority)
 1. **Enhance test_prd_requirements.py** ⭐ (Most Critical - CI/CD dependency)
    ```bash
    # Must include ALL test_basic.py functionality
@@ -160,7 +160,7 @@
 
 2. **Enhance performance_test.py**
    ```bash
-   # Add CLI options for functionality from removed scripts  
+   # Add CLI options for functionality from removed scripts
    python performance_test.py --quick     # Replaces quick_performance_test.py
    python performance_test.py --simple    # Replaces simple_prd_test.py
    ```
@@ -175,7 +175,7 @@
 **Priority Order:**
 1. **CI/CD Workflows** (Breaking changes if not updated)
    - Replace `test_basic.py` → `test_prd_requirements.py --basic`
-2. **Makefile** (Build system dependency)  
+2. **Makefile** (Build system dependency)
    - Update test-basic target
 3. **Shell Scripts**
    - Update `validate_all_requirements.sh`
@@ -195,7 +195,7 @@ mv validate_test_setup.py deprecated/
 
 ## Success Criteria
 - [ ] All original functionality preserved in consolidated scripts
-- [ ] All tests pass with consolidated scripts  
+- [ ] All tests pass with consolidated scripts
 - [ ] Documentation updated to reflect new script organization
 - [ ] No broken references to removed scripts
 - [ ] CI/CD pipelines work with new structure
@@ -220,7 +220,7 @@ If issues arise during implementation:
 
 ## Ready to Execute
 This plan is comprehensive and ready for implementation. The consolidation will:
-- ✅ Reduce maintenance burden significantly  
+- ✅ Reduce maintenance burden significantly
 - ✅ Preserve all existing functionality
 - ✅ Improve developer experience
 - ✅ Maintain backward compatibility during transition

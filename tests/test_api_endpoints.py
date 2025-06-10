@@ -6,25 +6,26 @@ Comprehensive test suite for all REST API endpoints including
 WebSocket connections, query operations, and simulation control.
 """
 
-import pytest
 import asyncio
 import json
-import time
 import tempfile
+import time
 import zipfile
 from pathlib import Path
-from unittest.mock import Mock, patch, AsyncMock
-from typing import Dict, Any
+from typing import Any, Dict
+from unittest.mock import AsyncMock, Mock, patch
 
+import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from websockets import connect
 from websockets.exceptions import ConnectionClosed
 
+from rest_api.controllers import MockSNMPAgentController
+from rest_api.models import AgentStatus, HealthStatus
+
 # Import the API server and components
 from rest_api.server import SNMPAgentAPIServer
-from rest_api.controllers import MockSNMPAgentController
-from rest_api.models import HealthStatus, AgentStatus
 
 
 class TestAPIEndpoints:
@@ -492,8 +493,9 @@ class TestWebSocketEndpoints:
     @pytest.fixture
     async def websocket_server(self):
         """Start WebSocket server for testing."""
-        from rest_api.server import SNMPAgentAPIServer
         import uvicorn
+
+        from rest_api.server import SNMPAgentAPIServer
 
         server = SNMPAgentAPIServer(api_port=8081)
 

@@ -5,25 +5,27 @@ Test suite for REST API functionality
 This module tests the REST API server, controllers, and models.
 """
 
-import pytest
-import tempfile
 import json
+import tempfile
 import time
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
+
+from rest_api.controllers import MockSNMPAgentController
 
 # Import modules to test
 from rest_api.models import (
-    HealthStatus,
     AgentStatus,
-    HealthResponse,
-    MetricsResponse,
-    ConfigurationResponse,
     AgentStatusResponse,
-    RestartResponse,
+    ConfigurationResponse,
+    HealthResponse,
+    HealthStatus,
+    MetricsResponse,
     OIDListResponse,
+    RestartResponse,
 )
-from rest_api.controllers import MockSNMPAgentController
 from rest_api.server import SNMPAgentAPIServer
 
 

@@ -6,12 +6,12 @@ This script tests all functionality in a containerized environment
 to validate the complete system works as expected.
 """
 
-import subprocess
-import time
 import json
+import subprocess
 import sys
-from typing import Dict, List, Tuple
+import time
 from pathlib import Path
+from typing import Dict, List, Tuple
 
 
 class DockerSNMPTester:

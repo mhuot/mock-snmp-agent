@@ -5,9 +5,10 @@ REST API Models
 Pydantic models for request/response validation and documentation.
 """
 
-from typing import Dict, Any, Optional, List
-from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class HealthStatus(str, Enum):

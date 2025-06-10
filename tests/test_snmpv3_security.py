@@ -6,16 +6,17 @@ This module tests the SNMPv3 security failure simulation functionality
 including configuration, failure generation, and integration.
 """
 
-import pytest
-import tempfile
 import json
+import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 # Import modules to test
 from behaviors.snmpv3_security import (
-    SNMPv3SecuritySimulator,
     SecurityFailureConfig,
+    SNMPv3SecuritySimulator,
     create_security_config_from_dict,
 )
 
@@ -310,7 +311,7 @@ class TestSNMPv3SecuritySimulator:
             assert Path(temp_file).exists()
 
             # Read and verify content
-            with open(temp_file, "r") as f:
+            with open(temp_file) as f:
                 content = f.read()
 
             # Should contain header comments

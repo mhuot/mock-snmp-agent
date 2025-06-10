@@ -6,13 +6,13 @@ This module provides comprehensive ifXTable (RFC 2233) simulation with
 64-bit high capacity counters and enhanced interface attributes.
 """
 
-import time
-import random
 import math
-from typing import Dict, List, Optional, Tuple, Any
+import random
+import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 from .counter_wrap import CounterConfig, CounterWrapSimulator
 

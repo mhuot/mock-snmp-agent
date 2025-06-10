@@ -48,7 +48,7 @@ done
 
 **Resource Limits Tested:**
 - CPU utilization above 80%
-- Memory usage above 90%  
+- Memory usage above 90%
 - Concurrent request limits (50+ simultaneous)
 - Request queue overflow conditions
 
@@ -182,7 +182,7 @@ snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X privatus \
 snmpget -v3 -l authPriv -u simulator -a MD5 -A wrongpassword -x DES -X privatus \
     -n public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 
-# Test privacy failures  
+# Test privacy failures
 snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X wrongkey \
     -n public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
 ```
@@ -199,7 +199,7 @@ Use the REST API to automate complex testing scenarios. For complete API example
 
 Example scenario creation and execution:
 - Create test scenarios via `/simulation/scenarios` endpoint
-- Execute scenarios via `/simulation/execute` endpoint  
+- Execute scenarios via `/simulation/execute` endpoint
 - Monitor progress via WebSocket connections
 - Analyze results via `/metrics/history` endpoint
 
@@ -246,7 +246,7 @@ During testing, track these key metrics:
 Test with popular monitoring solutions:
 
 - **Nagios/Icinga**: Plugin response validation
-- **Zabbix**: Template behavior verification  
+- **Zabbix**: Template behavior verification
 - **PRTG**: Sensor accuracy testing
 - **LibreNMS**: Discovery and polling validation
 - **Observium**: Device classification testing
@@ -269,10 +269,10 @@ def test_counter_wrap_detection():
         ObjectType(ObjectIdentity('1.3.6.1.2.1.2.2.1.10.1')),
         lexicographicMode=False
     ))
-    
+
     # Wait for wrap to occur
     time.sleep(60)
-    
+
     # Monitor counter after wrap
     after_wrap = next(nextCmd(
         SnmpEngine(),
@@ -282,7 +282,7 @@ def test_counter_wrap_detection():
         ObjectType(ObjectIdentity('1.3.6.1.2.1.2.2.1.10.1')),
         lexicographicMode=False
     ))
-    
+
     # Verify wrap detection logic
     assert after_wrap < before_wrap, "Counter wrap not detected"
 ```

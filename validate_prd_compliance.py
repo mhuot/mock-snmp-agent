@@ -8,20 +8,21 @@ requirements are met by the Mock SNMP Agent implementation.
 This script maps each PRD requirement to specific tests and validates compliance.
 """
 
-import subprocess
-import time
-import sys
-import os
+import argparse
 import json
-import yaml
+import os
+import signal
+import subprocess
+import sys
+import threading
+import time
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import requests
 import websocket
-import argparse
-from pathlib import Path
-from dataclasses import dataclass, asdict
-from typing import List, Dict, Any, Optional
-import threading
-import signal
+import yaml
 
 
 def validate_test_setup():
@@ -457,7 +458,7 @@ class PRDComplianceValidator:
         try:
             config_file = "config/comprehensive.yaml"
             if os.path.exists(config_file):
-                with open(config_file, "r") as f:
+                with open(config_file) as f:
                     config_data = yaml.safe_load(f)
 
                 if config_data and isinstance(config_data, dict):
@@ -510,7 +511,7 @@ class PRDComplianceValidator:
         try:
             config_file = "config/comprehensive.yaml"
             if os.path.exists(config_file):
-                with open(config_file, "r") as f:
+                with open(config_file) as f:
                     config_data = yaml.safe_load(f)
 
                 # Check if simulation behaviors are defined in config

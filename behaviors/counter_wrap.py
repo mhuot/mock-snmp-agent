@@ -6,11 +6,11 @@ This module provides sophisticated counter wrap testing capabilities
 for validating SNMP monitoring systems against counter overflow scenarios.
 """
 
-import time
 import math
-from typing import Dict, List, Tuple, Optional
+import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -162,7 +162,7 @@ def generate_counter_snmprec(
 
     # Copy base file if provided
     if base_snmprec and base_snmprec.exists():
-        with open(base_snmprec, "r", encoding="utf-8") as f:
+        with open(base_snmprec, encoding="utf-8") as f:
             lines.extend(f.readlines())
 
     # Add counter entries

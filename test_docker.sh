@@ -77,7 +77,7 @@ fi
 # Show container logs for debugging if tests failed
 if [ $TEST_RESULT -ne 0 ]; then
     print_status "WARNING" "Showing container logs for debugging..."
-    
+
     for service in mock-snmp-basic mock-snmp-delay mock-snmp-drops mock-snmp-comprehensive mock-snmp-counters; do
         echo ""
         print_status "INFO" "Logs for $service:"

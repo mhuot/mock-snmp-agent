@@ -7,11 +7,11 @@ noSuchObject, and noSuchInstance responses. These are critical for testing
 SNMP walk operations and table boundary detection.
 """
 
-import random
 import logging
-from typing import Dict, List, Optional, Set, Tuple
+import random
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Optional, Set, Tuple
 
 
 class SNMPExceptionType(Enum):

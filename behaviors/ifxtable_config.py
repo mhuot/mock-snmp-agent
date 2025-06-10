@@ -6,19 +6,20 @@ This module loads ifXTable configurations from YAML files and integrates
 them with the ifXTable simulator and interface state engine.
 """
 
-import yaml
 import time
-from typing import Dict, List, Optional, Any
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import yaml
 
 from .ifxtable import (
+    AdminStatus,
     IfXTableSimulator,
     InterfaceDefinition,
-    AdminStatus,
-    OperStatus,
     InterfaceType,
     LinkTrapEnable,
+    OperStatus,
 )
 from .interface_engine import InterfaceStateEngine, StateChangeEvent
 
@@ -56,7 +57,7 @@ class IfXTableConfigLoader:
     def load_config(self, config_file: Path) -> bool:
         """Load ifXTable configuration from YAML file."""
         try:
-            with open(config_file, "r", encoding="utf-8") as f:
+            with open(config_file, encoding="utf-8") as f:
                 self.config_data = yaml.safe_load(f)
 
             print(f"Loaded ifXTable configuration from {config_file}")

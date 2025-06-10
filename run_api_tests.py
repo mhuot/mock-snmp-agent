@@ -5,10 +5,10 @@ API Test Runner
 Script to run comprehensive API tests with proper setup and reporting.
 """
 
-import os
-import sys
-import subprocess
 import argparse
+import os
+import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -131,14 +131,14 @@ async def main():
         api_host="127.0.0.1",
         api_port=8080
     )
-    
+
     config = uvicorn.Config(
         server.app,
         host="127.0.0.1",
         port=8080,
         log_level="error"
     )
-    
+
     server_instance = uvicorn.Server(config)
     await server_instance.serve()
 

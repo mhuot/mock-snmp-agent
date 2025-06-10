@@ -8,7 +8,7 @@ simulation:
       enabled: true
       global_delay: 50
       deviation: 25
-    
+
     # SNMPv3 Security Failures
     snmpv3_security:
       enabled: true

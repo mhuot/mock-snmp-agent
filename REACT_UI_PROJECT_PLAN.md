@@ -155,13 +155,13 @@ mock-snmp-agent-ui/
 export const useWebSocket = (channel: string) => {
   const [data, setData] = useState();
   const [isConnected, setIsConnected] = useState(false);
-  
+
   useEffect(() => {
     const ws = new WebSocket(`ws://localhost:8080/ws/${channel}`);
     // Handle connection, messages, errors
     return () => ws.close();
   }, [channel]);
-  
+
   return { data, isConnected };
 };
 ```
@@ -171,8 +171,8 @@ export const useWebSocket = (channel: string) => {
 // services/api.ts
 export const agentApi = createApi({
   reducerPath: 'agentApi',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:8080' 
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://localhost:8080'
   }),
   endpoints: (builder) => ({
     getHealth: builder.query<HealthResponse, void>({

@@ -8,7 +8,7 @@ services:
     environment:
       - PYTHONWARNINGS=ignore
     restart: unless-stopped
-    
+
   # Extended version with additional device data
   snmp-simulator-extended:
     build:
@@ -22,7 +22,7 @@ services:
       - PYTHONWARNINGS=ignore
     restart: unless-stopped
     profiles: ["extended"]
-    
+
   # Alternative configuration with multiple endpoints
   snmp-simulator-multi:
     build: .

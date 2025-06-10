@@ -101,7 +101,7 @@ simulation:
           acceleration: 100
           wrap_type: "32bit"
           initial_value: 4294967000  # Near wrap point
-        "1.3.6.1.2.1.2.2.1.16.1":  # ifOutOctets.1  
+        "1.3.6.1.2.1.2.2.1.16.1":  # ifOutOctets.1
           acceleration: 100
           wrap_type: "32bit"
           initial_value: 4294967000
@@ -231,7 +231,7 @@ simulation:
           oid_modifications:
             "1.3.6.1.2.1.1.3.0": 0        # sysUpTime = 0
             "1.3.6.1.2.1.2.2.1.8.1": 2    # ifOperStatus = down
-        - name: "operational"  
+        - name: "operational"
           duration: 300
           oid_modifications:
             "1.3.6.1.2.1.2.2.1.8.1": 1    # ifOperStatus = up
@@ -243,7 +243,7 @@ simulation:
 
 **Prometheus alerts to test:**
 - Device unreachable alerts
-- Interface down alerts  
+- Interface down alerts
 - System restart detection
 - Maintenance mode handling
 
@@ -267,7 +267,7 @@ scrape_configs:
     static_configs:
       - targets:
         - 127.0.0.1:11611  # Router
-        - 127.0.0.1:11612  # Switch  
+        - 127.0.0.1:11612  # Switch
         - 127.0.0.1:11613  # Firewall
     metrics_path: /snmp
     params:
@@ -296,7 +296,7 @@ simulation:
           error_type: "noSuchObject"
           probability: 100
         - oid_pattern: "1.3.6.1.2.1.2.2.1.1.*"
-          error_type: "authorizationError"  
+          error_type: "authorizationError"
           probability: 10
         - oid_pattern: "1.3.6.1.2.1.1.3.0"
           error_type: "timeout"
@@ -436,7 +436,7 @@ simulation:
       global_delay: 2000      # 2 second delays
       deviation: 1000         # High variation
     packet_loss:
-      enabled: true  
+      enabled: true
       drop_rate: 10           # 10% packet loss
     counter_wrap:
       enabled: true
@@ -461,24 +461,24 @@ scenarios=("standard" "high_frequency" "large_tables" "with_delays")
 
 for scenario in "${scenarios[@]}"; do
     echo "Testing scenario: $scenario"
-    
+
     # Start mock agent with scenario config
     python mock_snmp_agent.py --config "config/prometheus_${scenario}.yaml" --port 11611 &
     agent_pid=$!
     sleep 5
-    
+
     # Measure scrape performance
     echo "Measuring scrape time..."
     time curl -s "http://localhost:9116/snmp?target=127.0.0.1:11611&module=mock_${scenario}" > "/tmp/metrics_${scenario}.txt"
-    
+
     # Count metrics returned
     metric_count=$(grep -c "^[a-zA-Z]" "/tmp/metrics_${scenario}.txt")
     echo "Metrics returned: $metric_count"
-    
+
     # Stop agent
     kill $agent_pid
     wait $agent_pid 2>/dev/null
-    
+
     echo "---"
 done
 ```
@@ -618,56 +618,56 @@ on: [push, pull_request]
 jobs:
   test-integration:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
         # Download prometheus-snmp-exporter
         wget https://github.com/prometheus/snmp_exporter/releases/download/v0.24.1/snmp_exporter-0.24.1.linux-amd64.tar.gz
         tar xzf snmp_exporter-0.24.1.linux-amd64.tar.gz
-    
+
     - name: Start Mock SNMP Agent
       run: |
         python mock_snmp_agent.py --config config/prometheus_standard.yaml --port 11611 &
         sleep 5
-    
+
     - name: Start SNMP Exporter
       run: |
         ./snmp_exporter-0.24.1.linux-amd64/snmp_exporter --config.file=tests/snmp.yml &
         sleep 5
-    
+
     - name: Test Integration
       run: |
         # Test basic scraping
         curl -f "http://localhost:9116/snmp?target=127.0.0.1:11611&module=mock_standard"
-        
+
         # Test metrics format
         curl -s "http://localhost:9116/snmp?target=127.0.0.1:11611&module=mock_standard" | grep -q "ifInOctets_total"
-        
+
         # Test scrape duration metric
         curl -s "http://localhost:9116/snmp?target=127.0.0.1:11611&module=mock_standard" | grep -q "snmp_scrape_duration_seconds"
-    
+
     - name: Test Counter Wrap Handling
       run: |
         # Start agent with counter wrap simulation
         pkill -f mock_snmp_agent || true
         python mock_snmp_agent.py --config config/counter_wrap_prometheus.yaml --port 11611 &
         sleep 5
-        
+
         # Scrape multiple times to observe counter behavior
         for i in {1..5}; do
           curl -s "http://localhost:9116/snmp?target=127.0.0.1:11611&module=mock_standard" > "scrape_$i.txt"
           sleep 10
         done
-        
+
         # Verify counter values increase (allowing for wraps)
         python tests/verify_counter_progression.py scrape_*.txt
 ```
@@ -684,8 +684,8 @@ services:
     ports:
       - "11611:161/udp"
     command: >
-      python mock_snmp_agent.py 
-      --config config/prometheus_standard.yaml 
+      python mock_snmp_agent.py
+      --config config/prometheus_standard.yaml
       --port 161
     volumes:
       - ./config:/app/config
@@ -760,17 +760,17 @@ import sys
 
 def validate_prometheus_metrics(exporter_url, target, module):
     """Validate prometheus-snmp-exporter metrics format and content."""
-    
+
     url = f"{exporter_url}/snmp"
     params = {"target": target, "module": module}
-    
+
     try:
         response = requests.get(url, params=params, timeout=30)
         response.raise_for_status()
-        
+
         metrics_text = response.text
         lines = metrics_text.strip().split('\n')
-        
+
         # Validation checks
         checks = {
             "has_metrics": len([l for l in lines if not l.startswith('#') and l.strip()]) > 0,
@@ -778,22 +778,22 @@ def validate_prometheus_metrics(exporter_url, target, module):
             "has_scrape_duration": any("snmp_scrape_duration_seconds" in line for line in lines),
             "has_help_text": any(line.startswith("# HELP") for line in lines),
             "has_type_info": any(line.startswith("# TYPE") for line in lines),
-            "no_errors": "snmp_request_errors_total" not in metrics_text or 
+            "no_errors": "snmp_request_errors_total" not in metrics_text or
                         all(line.split()[-1] == "0" for line in lines if "snmp_request_errors_total" in line)
         }
-        
+
         print("Validation Results:")
         for check, passed in checks.items():
             status = "✅ PASS" if passed else "❌ FAIL"
             print(f"  {check}: {status}")
-        
+
         if all(checks.values()):
             print("\n🎉 All validations passed!")
             return True
         else:
             print("\n⚠️  Some validations failed!")
             return False
-            
+
     except requests.RequestException as e:
         print(f"❌ Request failed: {e}")
         return False
@@ -802,7 +802,7 @@ if __name__ == "__main__":
     exporter_url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:9116"
     target = sys.argv[2] if len(sys.argv) > 2 else "127.0.0.1:11611"
     module = sys.argv[3] if len(sys.argv) > 3 else "mock_standard"
-    
+
     success = validate_prometheus_metrics(exporter_url, target, module)
     sys.exit(0 if success else 1)
 ```

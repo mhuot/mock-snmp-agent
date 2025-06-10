@@ -3,12 +3,12 @@
 Test script to verify PRD requirements for Mock SNMP Agent
 """
 
-import subprocess
-import time
-import sys
-import os
-import warnings
 import argparse
+import os
+import subprocess
+import sys
+import time
+import warnings
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -77,7 +77,6 @@ def test_basic_snmp_functionality():
         stdout=subprocess.PIPE,
         env=env,
     ) as simulator_process:
-
         # Give it time to start
         time.sleep(3)
 

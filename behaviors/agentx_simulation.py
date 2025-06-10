@@ -7,11 +7,11 @@ including subagent delays, registration timeouts, and master-agent
 communication latencies commonly seen in network devices.
 """
 
+import logging
 import random
 import time
-import logging
-from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass

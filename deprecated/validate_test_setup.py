@@ -6,11 +6,11 @@ This script validates that all testing infrastructure is properly configured
 before running the comprehensive Docker tests.
 """
 
-import sys
-import subprocess
 import json
+import subprocess
+import sys
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 
 def check_file_exists(file_path: str, description: str) -> bool:
@@ -82,7 +82,7 @@ def validate_config_files() -> bool:
         try:
             import yaml
 
-            with open(file_path, "r") as f:
+            with open(file_path) as f:
                 config = yaml.safe_load(f)
                 if "simulation" in config:
                     print(f"  ✓ Valid YAML structure")

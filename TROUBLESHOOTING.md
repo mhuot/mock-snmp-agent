@@ -86,7 +86,7 @@ snmpget: Timeout (No Response from localhost:11611)
    ```bash
    # For local installation
    ps aux | grep mock_snmp_agent
-   
+
    # For Docker
    docker ps
    docker logs <container_id>
@@ -96,7 +96,7 @@ snmpget: Timeout (No Response from localhost:11611)
    ```bash
    # Default port is 11611
    netstat -ln | grep 11611
-   
+
    # Test with telnet
    telnet 127.0.0.1 11611
    ```
@@ -105,10 +105,10 @@ snmpget: Timeout (No Response from localhost:11611)
    ```bash
    # macOS
    sudo pfctl -s rules | grep 11611
-   
+
    # Linux (ufw)
    sudo ufw status
-   
+
    # Linux (iptables)
    sudo iptables -L | grep 11611
    ```
@@ -117,7 +117,7 @@ snmpget: Timeout (No Response from localhost:11611)
    ```bash
    # Correct UDP port mapping
    docker run -p 11611:161/udp mock-snmp-agent
-   
+
    # Check port mapping
    docker port <container_name>
    ```
@@ -135,7 +135,7 @@ snmpget: connect: Connection refused
    ```bash
    # Agent should bind to correct interface
    python mock_snmp_agent.py --port 11611 --verbose
-   
+
    # For external access, bind to all interfaces
    python mock_snmp_agent.py --host 0.0.0.0 --port 11611
    ```
@@ -144,7 +144,7 @@ snmpget: connect: Connection refused
    ```bash
    # Check what's using the port
    lsof -i :11611
-   
+
    # Use alternative port if needed
    python mock_snmp_agent.py --port 11612
    ```
@@ -164,11 +164,11 @@ SNMPv2-SMI::org = No Such Instance currently exists at this OID
    ```bash
    # List available OIDs
    snmpwalk -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1
-   
+
    # Check specific OID
    snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
    ```
-   
+
    For complete SNMP command syntax, see [SNMP Commands Reference](SNMP_COMMANDS_REFERENCE.md).
 
 2. **Use correct community string:**
@@ -177,14 +177,14 @@ SNMPv2-SMI::org = No Such Instance currently exists at this OID
    snmpget -v2c -c public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
    snmpget -v2c -c variation/delay 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
    ```
-   
+
    For community string variations, see [SNMP Commands Reference](SNMP_COMMANDS_REFERENCE.md#community-string-variations).
 
 3. **Check data file is properly loaded:**
    ```bash
    # Start with verbose output
    python mock_snmp_agent.py --verbose --port 11611
-   
+
    # Check data directory
    ls -la data/
    ```
@@ -203,20 +203,20 @@ snmpget: Authentication failure (incorrect password, community or key)
    # Use correct default credentials
    snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X privatus \
        -n public 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
-   
+
    # Test step by step
    # 1. No auth/priv
    snmpget -v3 -l noAuthNoPriv -u simulator 127.0.0.1:11611 1.3.6.1.2.1.1.1.0
-   
+
    # 2. Auth only
    snmpget -v3 -l authNoPriv -u simulator -a MD5 -A auctoritas \
        127.0.0.1:11611 1.3.6.1.2.1.1.1.0
-   
+
    # 3. Auth + Priv
    snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X privatus \
        127.0.0.1:11611 1.3.6.1.2.1.1.1.0
    ```
-   
+
    For complete SNMPv3 command examples, see [SNMP Commands Reference](SNMP_COMMANDS_REFERENCE.md#snmpv3-commands).
 
 2. **Check engine ID discovery:**
@@ -240,7 +240,7 @@ Responses taking longer than expected.
    ```bash
    # Verify no artificial delays are configured
    grep -r "delay" config/
-   
+
    # Check current configuration via API
    curl http://localhost:8080/config
    ```
@@ -249,7 +249,7 @@ Responses taking longer than expected.
    ```bash
    # Check CPU/memory usage
    top -p $(pgrep -f mock_snmp_agent)
-   
+
    # Monitor with API
    curl http://localhost:8080/metrics
    ```
@@ -262,7 +262,7 @@ Responses taking longer than expected.
        enabled: false
      error_injection:
        enabled: false
-   
+
    agent:
      endpoint: "127.0.0.1:11611"
    ```
@@ -289,7 +289,7 @@ Agent consuming excessive memory.
    simulation:
      bulk_operations:
        enabled: false
-     
+
      resource_limits:
        enabled: true
        max_concurrent: 50  # Reduce from default
@@ -310,7 +310,7 @@ Error: Address already in use
    ```bash
    # Check if port 8080 is in use
    lsof -i :8080
-   
+
    # Use different port
    python mock_snmp_agent.py --rest-api --api-port 8081
    ```
@@ -319,7 +319,7 @@ Error: Address already in use
    ```bash
    # Find and kill process using port
    sudo kill $(lsof -t -i:8080)
-   
+
    # Or use alternative approach
    pkill -f "uvicorn.*8080"
    ```
@@ -337,7 +337,7 @@ WebSocket connection failed: Connection refused
    ```bash
    # Check API health
    curl http://localhost:8080/health
-   
+
    # Check WebSocket endpoint
    curl -H "Upgrade: websocket" -H "Connection: Upgrade" \
         http://localhost:8080/ws/metrics
@@ -347,7 +347,7 @@ WebSocket connection failed: Connection refused
    ```python
    import asyncio
    import websockets
-   
+
    async def test_websocket():
        try:
            uri = "ws://localhost:8080/ws/metrics"
@@ -356,7 +356,7 @@ WebSocket connection failed: Connection refused
                print(f"Received: {message}")
        except Exception as e:
            print(f"WebSocket error: {e}")
-   
+
    asyncio.run(test_websocket())
    ```
 
@@ -384,7 +384,7 @@ yaml.scanner.ScannerError: mapping values are not allowed here
      counter_wrap:
        counters:
          1.3.6.1.2.1.1.1.0: 1000  # Should be quoted
-   
+
    # Correct
    simulation:
      counter_wrap:
@@ -403,7 +403,7 @@ Configuration changes not taking effect.
    ```bash
    # Stop agent
    pkill -f mock_snmp_agent
-   
+
    # Start with new config
    python mock_snmp_agent.py --config config/updated.yaml
    ```

@@ -24,11 +24,11 @@ simulation:
     deviation: integer (milliseconds)
     oid_specific:
       "OID": delay_ms
-  
+
   # Packet loss simulation
   drop_rate: integer (percentage 0-100)
   packet_loss: integer (percentage 0-100)
-  
+
   # Counter wrap simulation
   counter_wrap:
     enabled: boolean
@@ -37,7 +37,7 @@ simulation:
         acceleration: integer
         wrap_type: "32bit" | "64bit"
         initial_value: integer
-  
+
   # Resource constraint simulation
   resource_limits:
     enabled: boolean
@@ -45,17 +45,17 @@ simulation:
     memory_limit: integer (percentage)
     max_concurrent: integer
     queue_size: integer
-  
+
   # Error injection
   error_injection:
     enabled: boolean
     error_rate: integer (percentage)
-    error_types: 
+    error_types:
       - "noSuchName"
       - "authorizationError"
       - "noAccess"
       - "genErr"
-  
+
   # Agent restart simulation
   restart:
     enabled: boolean
@@ -71,7 +71,7 @@ agent:
       access: "read"
     - name: "private"
       access: "write"
-  
+
   # SNMPv3 configuration
   snmpv3:
     enabled: boolean
@@ -101,7 +101,7 @@ simulation:
     enabled: true
     global_delay: 500      # 500ms delay for all responses
     deviation: 100         # ±100ms random variation
-  
+
   drop_rate: 5             # 5% packet drop rate
   packet_loss: 2           # 2% packet loss simulation
 
@@ -129,7 +129,7 @@ simulation:
         acceleration: 1000   # 1000x speed for testing
         wrap_type: "32bit"   # 32-bit counter
         initial_value: 4294967000  # Start near wrap
-      "1.3.6.1.2.1.2.2.1.16": # ifOutOctets  
+      "1.3.6.1.2.1.2.2.1.16": # ifOutOctets
         acceleration: 1000
         wrap_type: "32bit"
         initial_value: 4294967000
@@ -166,7 +166,7 @@ simulation:
     memory_limit: 90       # Simulate 90% memory usage
     max_concurrent: 50     # Max 50 concurrent requests
     queue_size: 100        # Request queue size
-  
+
   # Add some delay under high load
   delay:
     enabled: true
@@ -207,7 +207,7 @@ simulation:
       "1.3.6.1.2.1.4.20": # IP address table
         entries: 500
         response_delay: 5
-  
+
   # Simulate memory pressure during bulk ops
   resource_limits:
     enabled: true
@@ -240,10 +240,10 @@ simulation:
     oid_specific:
       "1.3.6.1.2.1.1.1.0": 100   # Fast response for sysDescr
       "1.3.6.1.2.1.2.2.1": 500   # Slow response for interface table
-  
+
   drop_rate: 10            # 10% packet drop
   packet_loss: 5           # 5% additional packet loss
-  
+
   # Intermittent connectivity issues
   restart:
     enabled: true
@@ -271,7 +271,7 @@ simulation:
       - "authorizationError" # 30% of errors
       - "noAccess"         # 20% of errors
       - "genErr"           # 10% of errors
-    
+
     # OID-specific error configuration
     oid_errors:
       "1.3.6.1.2.1.1.4.0": "noAccess"     # sysContact always fails
@@ -302,7 +302,7 @@ agent:
   communities:
     - name: "public"
       access: "read"
-  
+
   snmpv3:
     enabled: true
     users:
@@ -311,7 +311,7 @@ agent:
         auth_key: "authkey123"
         priv_protocol: "DES"
         priv_key: "privkey123"
-      - username: "shauser" 
+      - username: "shauser"
         auth_protocol: "SHA"
         auth_key: "shakey456"
         priv_protocol: "AES"
@@ -350,28 +350,28 @@ simulation:
     deviation: 25
     oid_specific:
       "1.3.6.1.2.1.2.2.1": 200  # Interface table slower
-  
+
   drop_rate: 2             # Light packet loss
   packet_loss: 1
-  
+
   counter_wrap:
     enabled: true
     counters:
-      "1.3.6.1.2.1.2.2.1.10": 
+      "1.3.6.1.2.1.2.2.1.10":
         acceleration: 100
         wrap_type: "32bit"
-  
+
   resource_limits:
     enabled: true
     cpu_limit: 70
     memory_limit: 80
     max_concurrent: 75
-  
+
   error_injection:
     enabled: true
     error_rate: 5          # Light error injection
     error_types: ["noSuchName", "genErr"]
-  
+
   restart:
     enabled: true
     interval: 600          # Restart every 10 minutes
@@ -383,9 +383,9 @@ agent:
   communities:
     - name: "public"
       access: "read"
-    - name: "private" 
+    - name: "private"
       access: "write"
-  
+
   snmpv3:
     enabled: true
     users:

@@ -7,7 +7,8 @@ of network devices and systems.
 """
 
 from typing import Dict, List
-from .core import StateDefinition, DeviceStateMachine
+
+from .core import DeviceStateMachine, StateDefinition
 
 
 def create_router_states() -> List[StateDefinition]:

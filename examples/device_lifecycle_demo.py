@@ -16,11 +16,11 @@ Prerequisites:
     - net-snmp tools for testing SNMP responses
 """
 
+import subprocess
 import sys
 import time
-import subprocess
-from typing import Dict, List
 from pathlib import Path
+from typing import Dict, List
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -28,8 +28,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from state_machine.core import DeviceStateMachine
 from state_machine.device_types import (
     create_device_state_machine,
-    get_supported_device_types,
     get_device_type_info,
+    get_supported_device_types,
 )
 
 

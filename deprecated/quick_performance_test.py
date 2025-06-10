@@ -4,9 +4,9 @@ Quick Performance Test for SNMP simulator
 Validates basic PRD requirements quickly
 """
 
+import statistics
 import subprocess
 import time
-import statistics
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 

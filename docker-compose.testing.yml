@@ -20,9 +20,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      python mock_snmp_agent.py 
-      --config config/snmpv3_security_test.yaml 
-      --host 0.0.0.0 
+      python mock_snmp_agent.py
+      --config config/snmpv3_security_test.yaml
+      --host 0.0.0.0
       --port 11611
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
@@ -48,9 +48,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      python mock_snmp_agent.py 
-      --config config/api_config.yaml 
-      --host 0.0.0.0 
+      python mock_snmp_agent.py
+      --config config/api_config.yaml
+      --host 0.0.0.0
       --port 11611
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
@@ -76,9 +76,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      python mock_snmp_agent.py 
-      --config config/state_machine_test.yaml 
-      --host 0.0.0.0 
+      python mock_snmp_agent.py
+      --config config/state_machine_test.yaml
+      --host 0.0.0.0
       --port 11611
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
@@ -104,9 +104,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      python mock_snmp_agent.py 
-      --config config/comprehensive.yaml 
-      --host 0.0.0.0 
+      python mock_snmp_agent.py
+      --config config/comprehensive.yaml
+      --host 0.0.0.0
       --port 11611
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]

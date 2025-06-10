@@ -149,7 +149,7 @@ This document provides comprehensive performance benchmarks and validation resul
 
 Large Dataset (10MB):
 - **JSON**: 2.1 seconds → 12.5MB
-- **CSV**: 1.8 seconds → 8.9MB  
+- **CSV**: 1.8 seconds → 8.9MB
 - **YAML**: 3.2 seconds → 11.8MB
 - **ZIP Archive**: 4.1 seconds → 2.8MB
 
@@ -203,7 +203,7 @@ Large Dataset (10MB):
 - **Resource Usage**: 85% CPU, 680MB memory
 
 **Scenario 2: API Load Test**
-- **Duration**: 5 minutes  
+- **Duration**: 5 minutes
 - **Peak Load**: 200 concurrent API requests
 - **Result**: 720 req/sec sustained, 0.1% error rate
 - **Resource Usage**: 78% CPU, 520MB memory
@@ -259,7 +259,7 @@ Large Dataset (10MB):
 ### Optimization Techniques Applied
 
 1. **Connection Pooling**: Reduced connection overhead
-2. **Response Caching**: Improved repeat query performance  
+2. **Response Caching**: Improved repeat query performance
 3. **Async Processing**: Better concurrency handling
 4. **Memory Management**: Optimized data structures
 5. **Database Indexing**: Faster OID lookups
@@ -336,7 +336,7 @@ python -m memory_profiler mock_snmp_agent.py
 ### ✅ Simulation Behaviors Validated
 
 - **Delay Simulation**: Configurable delays 100ms-5000ms ✓
-- **Packet Loss**: 1-20% loss rates tested ✓  
+- **Packet Loss**: 1-20% loss rates tested ✓
 - **Counter Wrap**: 32-bit and 64-bit wrap detection ✓
 - **Resource Limits**: CPU 80%+ and Memory 90%+ constraints ✓
 - **Bulk Testing**: Large table simulation (1000+ entries) ✓

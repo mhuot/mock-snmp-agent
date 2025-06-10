@@ -5,20 +5,21 @@ Simulation Scenario Tests
 Tests for test scenario creation, execution, and management functionality.
 """
 
-import pytest
 import asyncio
-import time
 import json
-from unittest.mock import Mock, AsyncMock, patch
-from typing import Dict, Any
+import time
+from typing import Any, Dict
+from unittest.mock import AsyncMock, Mock, patch
 
+import pytest
+
+from rest_api.controllers import MockSNMPAgentController
 from rest_api.simulation_control import (
-    SimulationScenarioManager,
-    TestScenario,
     BehaviorConfig,
     ScenarioStatus,
+    SimulationScenarioManager,
+    TestScenario,
 )
-from rest_api.controllers import MockSNMPAgentController
 
 
 class TestScenarioCreation:

@@ -1,15 +1,16 @@
 """Pytest configuration and fixtures for Mock SNMP Agent tests."""
 
-import pytest
 import asyncio
+import os
+import shutil
+import signal
 import subprocess
 import tempfile
-import shutil
 import time
-import os
-import signal
 from pathlib import Path
 from unittest.mock import Mock, patch
+
+import pytest
 
 # Import test dependencies
 pytest_plugins = ["pytest_asyncio"]

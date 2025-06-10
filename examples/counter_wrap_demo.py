@@ -7,8 +7,8 @@ which is one of the most important SNMP monitoring challenges.
 """
 
 import subprocess
-import time
 import sys
+import time
 from pathlib import Path
 
 # Add parent directory to path to import modules

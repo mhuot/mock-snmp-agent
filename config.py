@@ -10,7 +10,8 @@ import json
 import os
 import tempfile
 from pathlib import Path
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
 import yaml
 
 
@@ -141,7 +142,7 @@ class SimulationConfig:
         if not path.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
 
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             if path.suffix in [".yaml", ".yml"]:
                 loaded_config = yaml.safe_load(f)
             elif path.suffix == ".json":
@@ -328,7 +329,7 @@ class SimulationConfig:
         behaviors = self.config["simulation"]["behaviors"]
         dest_file = Path(dest_dir) / source_file.name
 
-        with open(source_file, "r", encoding="utf-8") as infile, open(
+        with open(source_file, encoding="utf-8") as infile, open(
             dest_file, "w", encoding="utf-8"
         ) as outfile:
             for line in infile:
@@ -417,8 +418,8 @@ class SimulationConfig:
             # Apply SNMPv3 security failures
             elif behaviors["snmpv3_security"]["enabled"]:
                 from .behaviors.snmpv3_security import (  # pylint: disable=import-outside-toplevel
-                    create_security_config_from_dict,
                     SNMPv3SecuritySimulator,
+                    create_security_config_from_dict,
                 )
 
                 security_config = create_security_config_from_dict(

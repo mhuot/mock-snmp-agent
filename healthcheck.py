@@ -3,9 +3,9 @@
 Health check script for Mock SNMP Agent containers.
 """
 
+import os
 import subprocess
 import sys
-import os
 
 
 def main():

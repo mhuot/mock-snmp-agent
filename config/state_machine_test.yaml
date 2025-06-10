@@ -6,7 +6,7 @@ simulation:
     # Basic behaviors (can be combined with state machine)
     delay:
       enabled: false
-    
+
     snmpv3_security:
       enabled: false
 
@@ -16,12 +16,12 @@ simulation:
     device_type: "router"          # router, switch, server, printer, generic
     initial_state: "booting"       # Starting state for the device
     auto_transitions: true         # Enable automatic state transitions
-    
+
     # Transition timing configuration
     transition_delays:
       min: 5                       # Minimum seconds between transitions
       max: 30                      # Maximum seconds between transitions
-    
+
     # Custom state definitions (optional - overrides defaults)
     custom_states:
       # Example: Custom operational state with specific characteristics
@@ -35,7 +35,7 @@ simulation:
         transition_probabilities:
           maintenance: 0.1
           degraded: 0.05
-    
+
     # Global OID overrides for all states (optional)
     oid_overrides:
       "1.3.6.1.2.1.1.4.0": "State Machine Test Contact"  # sysContact

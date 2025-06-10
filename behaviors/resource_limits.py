@@ -6,12 +6,13 @@ This module simulates device resource constraints including CPU, memory,
 and concurrent request limits to test monitoring system resilience.
 """
 
-import time
-import threading
-import psutil
 import queue
-from typing import Dict, Optional, Callable
+import threading
+import time
 from dataclasses import dataclass
+from typing import Callable, Dict, Optional
+
+import psutil
 
 
 @dataclass

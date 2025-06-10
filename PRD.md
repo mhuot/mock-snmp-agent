@@ -7,7 +7,7 @@ The Mock SNMP Agent is a comprehensive SNMP simulator designed to simulate the b
 ## Objectives
 
 1. Simulate a variety of SNMP agent behaviors for testing and training
-2. Provide a controllable and deterministic environment for SNMP tool development  
+2. Provide a controllable and deterministic environment for SNMP tool development
 3. Support easy integration with existing SNMP tools and frameworks
 4. Enable comprehensive testing of SNMP monitoring systems under various conditions
 
@@ -233,11 +233,11 @@ simulation:
 
 ### ✅ AgentX-Style Response Simulation
 - **Subagent registration delays** - Simulates AgentX subagent registration timeouts ✅
-- **Master agent communication delays** - Variable delays by MIB subsystem ✅  
+- **Master agent communication delays** - Variable delays by MIB subsystem ✅
 - **Connection failure simulation** - Subagent disconnection/reconnection scenarios ✅
 - **OID-specific delay patterns** - Different delays for interfaces, routing, hardware ✅
 
-### ✅ SNMPv3 Context Handling  
+### ✅ SNMPv3 Context Handling
 - **Multiple context support** - VRF, bridge domains, firewall zones ✅
 - **Context-based access control** - User authorization per context ✅
 - **Context-specific OID values** - Same OID, different values per context ✅
@@ -251,7 +251,7 @@ simulation:
 
 ## Out of Scope
 
-- SNMP trap generation  
+- SNMP trap generation
 - Graphical user interface (provides config files and APIs)
 - Package distribution (pip, apt, brew, etc.)
 

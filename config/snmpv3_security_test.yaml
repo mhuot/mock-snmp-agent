@@ -7,26 +7,26 @@ simulation:
     # SNMPv3 Security Failure Simulation
     snmpv3_security:
       enabled: true
-      
+
       # Time window violations (clock skew beyond 150-second window)
       time_window_failures:
         enabled: true
         clock_skew_seconds: 200      # Simulate clock skew beyond SNMP window
         failure_rate: 15             # 15% of requests will fail with time window error
-      
+
       # Authentication failures
       authentication_failures:
         enabled: true
         wrong_credentials_rate: 10   # 10% wrong authentication credentials
         unsupported_auth_rate: 5     # 5% unsupported auth algorithms
         unknown_user_rate: 8         # 8% unknown user names
-      
+
       # Privacy/encryption failures
       privacy_failures:
         enabled: true
         decryption_error_rate: 7     # 7% decryption errors
         unsupported_privacy_rate: 3  # 3% unsupported privacy protocols
-      
+
       # Engine discovery failures
       engine_discovery_failures:
         enabled: true
