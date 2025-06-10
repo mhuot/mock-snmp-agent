@@ -1,29 +1,102 @@
 repos:
+# Basic file checks - addresses whitespace and YAML issues from commits
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.5.0
     hooks:
     -   id: check-yaml
+        name: Check YAML syntax
     -   id: end-of-file-fixer
+        name: Fix end of files
     -   id: trailing-whitespace
+        name: Trim trailing whitespace
+    -   id: check-merge-conflict
+        name: Check for merge conflicts
+    -   id: check-ast
+        name: Check Python AST
+    -   id: check-docstring-first
+        name: Check docstring is first
+    -   id: debug-statements
+        name: Check for debug statements
+
+# Python version upgrade - keep current
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.29.0
+    rev: v3.15.0
     hooks:
     -   id: pyupgrade
         args: [--py37-plus]
+
+# Black formatting - addresses most pylint formatting issues
 -   repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.12.1
     hooks:
     -   id: black
-# -   repo: https://github.com/PyCQA/isort
-#     rev: 5.10.1
+        name: Format Python code with black
+        language_version: python3
+
+# Import sorting - addresses import order issues from commits
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort
+        name: Sort Python imports
+        args: ["--profile", "black", "--check-only", "--diff"]
+
+# Pylint - catches specific exception handling and other issues
+-   repo: https://github.com/PyCQA/pylint
+    rev: v3.0.3
+    hooks:
+    -   id: pylint
+        name: Run pylint checks
+        args: [
+            "--disable=C0114,C0115,C0116",  # Disable missing docstring warnings
+            "--enable=W0703",               # Enable broad-except warning
+            "--fail-under=8.0"             # Minimum score to pass
+        ]
+        additional_dependencies: [
+            "fastapi",
+            "pydantic",
+            "uvicorn",
+            "websockets",
+            "pyyaml",
+            "snmpsim-lextudio"
+        ]
+
+# Security checks - prevent secrets and security issues (disabled due to CLI args issues)
+# -   repo: https://github.com/PyCQA/bandit
+#     rev: 1.7.5
 #     hooks:
-#     -   id: isort
-# -   repo: local
-#     hooks:
-#       - id: actionlint
-#         name: actionlint
-#         entry: actionlint
-#         args: [-ignore, 'property ".+" is not defined in object type']
-#         language: script
-#         types: ["yaml"]
-#         files: ^.github/workflows/
+#     -   id: bandit
+#         name: Run security checks
+#         args: ["-r", ".", "--format", "json", "--exclude", "tests"]
+#         files: \.py$
+
+# Custom hooks for project-specific issues
+-   repo: local
+    hooks:
+    # Check for duplicate Path imports (specific issue from commits)
+    -   id: check-duplicate-imports
+        name: Check for duplicate imports
+        entry: python3 -c "import ast, sys; [sys.exit(1) for f in sys.argv[1:] if 'from pathlib import Path' in open(f).read() and open(f).read().count('import Path') > 1]"
+        language: system
+        files: \.py$
+
+    # Validate REST API module structure
+    -   id: check-rest-api-structure
+        name: Validate REST API module structure
+        entry: python3 -c "import os; exit(0 if os.path.exists('rest_api/__main__.py') else 1)"
+        language: system
+        pass_filenames: false
+
+    # Check for broad exception handling
+    -   id: check-broad-exceptions
+        name: Check for broad exception handling
+        entry: python3 -c "import sys, re; [sys.exit(1) for f in sys.argv[1:] if re.search(r'except Exception:', open(f).read())]"
+        language: system
+        files: \.py$
+
+    # Docker package validation
+    -   id: check-docker-packages
+        name: Check Docker packages
+        entry: python3 -c "import sys; forbidden=['snmp-mibs-downloader', 'net-snmp-utils', 'docker.io']; [sys.exit(1) for f in sys.argv[1:] if any(pkg in open(f).read() for pkg in forbidden)]"
+        language: system
+        files: ^Dockerfile

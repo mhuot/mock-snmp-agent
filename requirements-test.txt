@@ -10,6 +10,7 @@ pytest-xdist>=3.3.0
 # Web testing
 httpx>=0.24.0
 websockets>=11.0.0
+websocket-client>=1.8.0
 requests>=2.31.0
 
 # Mocking and fixtures
