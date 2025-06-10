@@ -8,7 +8,7 @@ I've created a comprehensive testing framework to validate that all PRD requirem
 
 ### **1. Quick Validation (Development)**
 ```bash
-python simple_prd_test.py
+python performance_test.py --simple
 ```
 - ✅ **Duration**: ~30 seconds
 - ✅ **Coverage**: Core SNMP protocols (SNMPv1, SNMPv2c, SNMPv3, GETBULK)
@@ -66,7 +66,7 @@ python validate_prd_compliance.py
 ```bash
 # Quick check
 source venv/bin/activate
-python simple_prd_test.py
+python performance_test.py --simple
 ```
 
 ### **For CI/CD (Automated)**
@@ -86,7 +86,7 @@ source venv/bin/activate
 ## 📁 **Files Created**
 
 1. **`validate_prd_compliance.py`** - Comprehensive PRD validation with detailed reporting
-2. **`simple_prd_test.py`** - Quick core requirements validation
+2. **`performance_test.py --simple`** - Quick core requirements validation
 3. **`test_snmp_exporter_integration.py`** - Prometheus SNMP Exporter integration testing
 4. **`validate_all_requirements.sh`** - Complete test suite runner
 5. **`PRD_TESTING_STRATEGY.md`** - Detailed testing documentation

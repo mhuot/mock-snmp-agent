@@ -48,7 +48,7 @@ jobs:
 
     - name: Run basic functionality tests
       run: |
-        if [ -f test_basic.py ]; then python test_basic.py; else echo "test_basic.py not found, skipping"; fi
+        python test_prd_requirements.py --basic
 
     - name: Run PRD requirements tests
       run: |

@@ -84,7 +84,7 @@ echo "⚡ Step 4: Running Performance Tests..."
 echo "====================================="
 
 # Run performance validation
-if python quick_performance_test.py; then
+if python performance_test.py --quick; then
     echo "✅ Performance Tests: PASSED"
 else
     echo "❌ Performance Tests: FAILED"

@@ -662,7 +662,7 @@ mock-snmp-agent/
 ├── quick_docker_test.py               # Fast Docker validation
 ├── test_prd_requirements.py           # PRD compliance testing
 ├── performance_test.py                # Performance benchmarking
-├── test_basic.py                      # Basic functionality tests
+├── test_prd_requirements.py --basic                      # Basic functionality tests
 ├── data/                              # Simulation data files
 ├── .dockerignore                      # Docker build optimizations
 └── venv/                              # Python virtual environment (local)
@@ -674,7 +674,7 @@ In addition to the comprehensive API test suite (`run_api_tests.py`), the projec
 
 ```bash
 # Core functionality validation
-python test_basic.py                    # Basic SNMP operations
+python test_prd_requirements.py --basic                    # Basic SNMP operations
 python test_prd_requirements.py         # PRD compliance verification
 python performance_test.py              # Performance benchmarking
 python quick_docker_test.py             # Fast Docker functionality check

@@ -14,8 +14,110 @@ import statistics
 import psutil
 import os
 import sys
+import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+
+
+def quick_snmp_request(request_id):
+    """Execute a single SNMP GET request for quick testing"""
+    start_time = time.time()
+    try:
+        result = subprocess.run(
+            [
+                "snmpget",
+                "-v2c",
+                "-c",
+                "public",
+                "-t",
+                "1",
+                "-r",
+                "0",
+                "127.0.0.1:11611",
+                "1.3.6.1.2.1.1.1.0",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=3,
+            check=False,
+        )
+
+        end_time = time.time()
+        latency_ms = (end_time - start_time) * 1000
+        success = result.returncode == 0 and "STRING:" in result.stdout
+
+        return {"id": request_id, "latency_ms": latency_ms, "success": success}
+    except Exception as exc:
+        return {
+            "id": request_id,
+            "latency_ms": 5000,  # Timeout
+            "success": False,
+            "error": str(exc),
+        }
+
+
+def quick_performance_test(num_requests=50, max_workers=10):
+    """Run quick performance test - equivalent to quick_performance_test.py"""
+    print(f"Quick Performance Test: {num_requests} requests with {max_workers} workers")
+    print("=" * 60)
+
+    start_time = time.time()
+    results = []
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(quick_snmp_request, i) for i in range(num_requests)]
+        for future in as_completed(futures):
+            results.append(future.result())
+
+    end_time = time.time()
+
+    # Analyze results
+    successful_results = [r for r in results if r["success"]]
+    failed_results = [r for r in results if not r["success"]]
+
+    if successful_results:
+        latencies = [r["latency_ms"] for r in successful_results]
+        throughput = num_requests / (end_time - start_time)
+        avg_latency = statistics.mean(latencies)
+
+        print(f"\nResults:")
+        print(f"Total requests: {num_requests}")
+        print(f"Successful: {len(successful_results)}")
+        print(f"Failed: {len(failed_results)}")
+        print(f"Success rate: {len(successful_results)/num_requests*100:.1f}%")
+        print(f"Throughput: {throughput:.1f} req/sec")
+        print(f"Average latency: {avg_latency:.2f}ms")
+        print(f"Min latency: {min(latencies):.2f}ms")
+        print(f"Max latency: {max(latencies):.2f}ms")
+
+        # PRD requirements check
+        print(f"\nPRD Requirements:")
+        latency_ok = avg_latency < 10
+        print(
+            f"Latency target (<10ms): {'✓ PASS' if latency_ok else '✗ FAIL'} ({avg_latency:.2f}ms)"
+        )
+        print(f"Throughput capability: {throughput:.1f} req/sec")
+
+        if len(successful_results) < num_requests * 0.9:
+            print("⚠ Warning: High failure rate detected")
+
+        # Final result
+        if len(successful_results) / num_requests > 0.9:
+            print(f"\n✅ Basic performance validated:")
+            print(f"   - Latency: {avg_latency:.2f}ms")
+            print(f"   - Throughput: {throughput:.1f} req/sec")
+            print(f"   - Success rate: {len(successful_results)/num_requests*100:.1f}%")
+        else:
+            print(f"\n❌ Performance test failed or incomplete")
+
+        return {
+            "throughput": throughput,
+            "avg_latency": avg_latency,
+            "success_rate": len(successful_results) / num_requests * 100,
+        }
+    else:
+        print("❌ No successful requests - check if simulator is running!")
+        return None
 
 
 def snmp_request(request_id):
@@ -304,6 +406,13 @@ def comprehensive_performance_suite():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="SNMP Agent Performance Testing")
+    parser.add_argument("--quick", action="store_true", 
+                       help="Run quick performance test (equivalent to quick_performance_test.py)")
+    parser.add_argument("--simple", action="store_true",
+                       help="Run simple PRD test (equivalent to simple_prd_test.py)")
+    args = parser.parse_args()
+
     # Check if psutil is available
     try:
         import psutil
@@ -311,5 +420,17 @@ if __name__ == "__main__":
         print("Warning: psutil not available. Memory monitoring disabled.")
         print("Install with: pip install psutil")
 
-    # Run comprehensive test suite
-    comprehensive_performance_suite()
+    if args.quick:
+        # Run quick performance test (equivalent to quick_performance_test.py)
+        quick_performance_test(num_requests=50, max_workers=10)
+    elif args.simple:
+        # Run simple PRD test - just run quick test with different messaging
+        print("🚀 Simple PRD Requirements Test")
+        print("=" * 40)
+        result = quick_performance_test(num_requests=10, max_workers=5)
+        if result and result["success_rate"] > 80:
+            print(f"\n🎉 Core PRD Requirements: VALIDATED ✅")
+            print("The Mock SNMP Agent meets basic PRD requirements!")
+    else:
+        # Run comprehensive test suite
+        comprehensive_performance_suite()

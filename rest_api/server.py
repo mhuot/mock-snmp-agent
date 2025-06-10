@@ -367,3 +367,8 @@ def create_api_server(
         cors_enabled=cors_enabled,
         cors_origins=cors_origins,
     )
+
+
+# Create a default app instance for uvicorn
+_default_server = create_api_server()
+app = _default_server.app

@@ -89,7 +89,7 @@ dev-setup: install-dev
 
 # Legacy test commands for backward compatibility
 test-basic:
-	python test_basic.py
+	python test_prd_requirements.py --basic
 
 test-prd:
 	python test_prd_requirements.py

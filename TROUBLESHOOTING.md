@@ -491,7 +491,7 @@ python mock_snmp_agent.py --check-system
 python mock_snmp_agent.py --config config/test.yaml --validate
 
 # Test SNMP functionality
-python test_basic.py
+python test_prd_requirements.py --basic
 
 # Run performance test
 python performance_test.py

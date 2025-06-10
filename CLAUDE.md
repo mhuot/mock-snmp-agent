@@ -32,14 +32,19 @@ venv\Scripts\activate  # On Windows
 # Install in development mode (after activating venv)
 pip install -e .
 
-# Install core dependencies
+# Install with all dependencies (recommended for development)
+pip install -e .[dev,test,api]
+
+# Install core dependencies only
 pip install -r requirements.txt
 
 # Install testing dependencies
 pip install -r requirements-test.txt
 
-# Install with API support
-pip install fastapi uvicorn websockets pyyaml
+# Makefile shortcuts
+make install        # Basic installation
+make install-dev    # Install with dev and test dependencies
+make dev-setup      # Complete development environment setup
 ```
 
 ### Running the Simulator
@@ -71,10 +76,21 @@ python run_api_tests.py export
 # Run with coverage and verbose output
 python run_api_tests.py all --coverage --verbose
 
-# Run legacy tests
-pytest tests/ -v
+# Pytest-based testing
+pytest -v                    # Run all tests
+pytest -m "not slow" -v      # Skip slow tests
+pytest --run-extensive -v    # Run extensive tests
+pytest tests/ -v             # Run specific test directory
+
+# Legacy/standalone tests
 python test_prd_requirements.py
 python performance_test.py
+python test_prd_requirements.py --basic
+
+# Makefile shortcuts
+make test          # Fast tests (excludes slow ones)
+make test-all      # All tests including slow ones
+make test-extensive # Extensive test suite
 ```
 
 ### Linting and Code Quality
@@ -88,6 +104,11 @@ black .
 # Run security checks
 bandit -r rest_api/
 safety check
+
+# Makefile shortcuts
+make lint      # Complete linting suite (pylint, bandit, safety)
+make format    # Format code with black
+make clean     # Clean build artifacts and cache files
 ```
 
 ## High-Level Architecture
@@ -98,6 +119,8 @@ safety check
 - **`rest_api/controllers.py`** - Business logic for agent control and monitoring
 - **`rest_api/websocket.py`** - Real-time WebSocket communication manager
 - **`rest_api/models.py`** - Pydantic data models for API validation
+- **`behaviors/`** - Simulation behavior modules (counter wrap, resource limits, SNMPv3 security, bulk operations)
+- **`state_machine/`** - Device state management and device type definitions
 
 ### REST API Architecture
 - **WebSocket Manager**: Handles real-time connections for metrics, logs, and SNMP activity
@@ -158,3 +181,18 @@ Variation modules in `/variation/` implement dynamic behavior by providing:
 2. **Implement behavior logic** in `behaviors/` directory
 3. **Add scenario tests** in `tests/test_simulation_scenarios.py`
 4. **Validate with test execution** using API endpoints
+
+## Build and Distribution
+```bash
+# Build package
+make build        # Clean and build package
+python -m build   # Direct build command
+
+# Docker operations
+make docker           # Build standard Docker image
+make docker-extended  # Build extended Docker image with additional features
+make docker-test      # Test Docker image functionality
+
+# Cleanup
+make clean           # Remove build artifacts, cache, and temporary files
+```
