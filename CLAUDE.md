@@ -4,137 +4,112 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Mock SNMP Agent is a comprehensive SNMP simulator built on snmpsim-lextudio, featuring advanced simulation behaviors and a REST API with real-time monitoring capabilities. It can act as multiple virtual SNMP-enabled devices with configurable behaviors for comprehensive testing of SNMP monitoring systems.
-
-### Key Features
-- **REST API**: FastAPI-based HTTP API for remote control and monitoring
-- **WebSocket Support**: Real-time streaming of metrics, logs, and SNMP activity
-- **Advanced Simulation**: Delay, packet loss, counter wrap, and resource constraint simulation
-- **Test Scenarios**: Create and execute complex testing scenarios
-- **Export/Import**: Configuration and data exchange in multiple formats
-- **Comprehensive Testing**: 78+ automated API tests with CI/CD integration
+Mock SNMP Agent is a comprehensive SNMP simulator built on snmpsim-lextudio, featuring advanced simulation behaviors and a REST API with real-time monitoring capabilities. It simulates multiple virtual SNMP-enabled devices with configurable behaviors for testing SNMP monitoring systems.
 
 ## Common Development Commands
 
-### Setup Virtual Environment
+### Setup and Installation
 ```bash
-# Create virtual environment
+# Create and activate virtual environment
 python3 -m venv venv
+source venv/bin/activate  # Linux/macOS
 
-# Activate virtual environment
-source venv/bin/activate  # On macOS/Linux
-# or
-venv\Scripts\activate  # On Windows
-```
-
-### Installation
-```bash
-# Install in development mode (after activating venv)
-pip install -e .
-
-# Install with all dependencies (recommended for development)
+# Development installation with all dependencies
 pip install -e .[dev,test,api]
 
-# Install core dependencies only
-pip install -r requirements.txt
-
-# Install testing dependencies
-pip install -r requirements-test.txt
-
-# Makefile shortcuts
-make install        # Basic installation
-make install-dev    # Install with dev and test dependencies
-make dev-setup      # Complete development environment setup
+# Quick setup via Makefile
+make dev-setup      # Complete development environment
+make install-dev    # Install with dev/test dependencies
 ```
 
 ### Running the Simulator
 ```bash
-# Start basic SNMP simulator
+# Basic SNMP simulator
 python mock_snmp_agent.py --port 11611
 
-# Start with REST API
+# With REST API enabled
 python mock_snmp_agent.py --rest-api --api-port 8080 --port 11611
 
-# Start with configuration file
+# Using configuration file
 python mock_snmp_agent.py --config config/comprehensive.yaml --port 11611
 
-# Start REST API server separately
+# REST API server standalone
 python -m rest_api.server --port 8080
 ```
 
 ### Testing
 ```bash
-# Run complete API test suite
-python run_api_tests.py all
+# Run API test suite
+python run_api_tests.py all              # All API tests
+python run_api_tests.py endpoints        # Endpoint tests only
+python run_api_tests.py websockets       # WebSocket tests only
+python run_api_tests.py --coverage      # With coverage report
 
-# Run specific test categories
-python run_api_tests.py endpoints
-python run_api_tests.py websockets
-python run_api_tests.py scenarios
-python run_api_tests.py export
-
-# Run with coverage and verbose output
-python run_api_tests.py all --coverage --verbose
-
-# Pytest-based testing
-pytest -v                    # Run all tests
-pytest -m "not slow" -v      # Skip slow tests
-pytest --run-extensive -v    # Run extensive tests
-pytest tests/ -v             # Run specific test directory
-
-# Legacy/standalone tests
-python test_prd_requirements.py
-python performance_test.py
-python test_prd_requirements.py --basic
+# Pytest commands
+pytest -v                    # All tests
+pytest -m "not slow" -v      # Fast tests only
+pytest --run-extensive -v    # Include extensive tests
+pytest tests/test_rest_api.py -v  # Specific test file
 
 # Makefile shortcuts
-make test          # Fast tests (excludes slow ones)
-make test-all      # All tests including slow ones
-make test-extensive # Extensive test suite
+make test          # Fast tests (excludes slow)
+make test-all      # All tests including slow
+make test-extensive # Full test suite
 ```
 
-### Linting and Code Quality
+### Code Quality
 ```bash
-# Run pylint on the codebase
-pylint mock_snmp_agent.py rest_api/
+# Format and lint
+black .                                  # Format code
+pylint mock_snmp_agent.py rest_api/ --fail-under=8.0
 
-# Format code with black
-black .
-
-# Run security checks
+# Security and safety checks
 bandit -r rest_api/
 safety check
 
 # Makefile shortcuts
-make lint      # Complete linting suite (pylint, bandit, safety)
-make format    # Format code with black
-make clean     # Clean build artifacts and cache files
+make lint      # Full linting suite
+make format    # Format with black
+```
+
+### Build and Docker
+```bash
+# Build package
+make build                # Clean and build
+python -m build           # Direct build
+
+# Docker operations
+make docker              # Standard image
+make docker-extended     # Extended features
+make docker-test         # Test Docker image
+docker compose up -d     # Run with docker-compose.yml
 ```
 
 ## High-Level Architecture
 
 ### Core Components
-- **`mock_snmp_agent.py`** - Enhanced main module with CLI options and configuration management
-- **`rest_api/server.py`** - FastAPI application server for HTTP/WebSocket API
-- **`rest_api/controllers.py`** - Business logic for agent control and monitoring
-- **`rest_api/websocket.py`** - Real-time WebSocket communication manager
-- **`rest_api/models.py`** - Pydantic data models for API validation
-- **`behaviors/`** - Simulation behavior modules (counter wrap, resource limits, SNMPv3 security, bulk operations)
-- **`state_machine/`** - Device state management and device type definitions
+- **`mock_snmp_agent.py`** - Main entry point, CLI parsing, agent orchestration
+- **`rest_api/server.py`** - FastAPI application with route registration
+- **`rest_api/controllers.py`** - Business logic for agent control
+- **`rest_api/websocket.py`** - Real-time WebSocket connection manager
+- **`rest_api/models.py`** - Pydantic models for validation
+- **`behaviors/`** - Simulation behaviors (counter wrap, delays, errors)
+- **`state_machine/`** - Device state management and transitions
 
 ### REST API Architecture
-- **WebSocket Manager**: Handles real-time connections for metrics, logs, and SNMP activity
-- **Query Endpoints**: Advanced OID querying with metadata and history tracking
-- **Simulation Control**: Test scenario creation, execution, and analysis
-- **Export/Import**: Multi-format data exchange (JSON, CSV, YAML, ZIP)
-- **Agent Control**: Remote agent management and configuration
 
-### Data Flow
-1. SNMP requests arrive at the simulator endpoint
-2. Requests are processed through configured simulation behaviors
-3. WebSocket manager broadcasts real-time activity to connected clients
-4. Metrics are collected and stored for historical analysis
-5. API endpoints provide access to current state and historical data
+The API follows a layered architecture with FastAPI:
+
+1. **Request Flow**: HTTP Request → FastAPI Router → Controller → Agent Process
+2. **WebSocket Channels**: `metrics`, `logs`, `state`, `snmp_activity`
+3. **Data Management**: Time-series storage, buffered history, export/import
+4. **Async Design**: All endpoints use async/await for non-blocking operations
+
+Key architectural patterns:
+- Channel-based WebSocket broadcasting with automatic cleanup
+- Pydantic models for all request/response validation
+- Modular endpoint organization (core, query, simulation, export)
+- Graceful degradation with health status reporting
 
 ### Simulation Data Format (.snmprec)
 ```
@@ -144,120 +119,107 @@ OID|TYPE|VALUE
 ```
 
 ### Variation Module Interface
-Variation modules in `/variation/` implement dynamic behavior by providing:
-- `init()` - Called once when module loads
-- `record()` - Called during recording phase (optional)
-- `variate()` - Called to generate dynamic responses
+Modules in `/variation/` implement:
+- `init()` - One-time initialization
+- `variate()` - Generate dynamic responses
+- `record()` - Recording phase (optional)
 
-## Key Development Patterns
+## Critical Development Guidelines
 
-1. **Async/Await**: All REST API endpoints and WebSocket handlers use async patterns
-2. **Pydantic Models**: Use Pydantic for all API request/response validation
-3. **FastAPI Patterns**: Follow FastAPI best practices for dependency injection and error handling
-4. **WebSocket Management**: Centralized connection management with channel-based broadcasting
-5. **Test-Driven Development**: Comprehensive test coverage with pytest and automated CI/CD
-6. **Configuration-Driven**: YAML/JSON configuration for simulation behaviors and test scenarios
-7. **Real-time Monitoring**: WebSocket streaming for live metrics and activity monitoring
-8. **Multi-format Support**: Export/import in JSON, CSV, YAML, and ZIP formats
+### Pre-Development Checklist (MANDATORY)
+```bash
+# 1. Clear port conflicts
+python cleanup_ports.py
+
+# 2. Format code
+black .
+
+# 3. Verify imports
+python -c "import rest_api.server; print('REST API OK')"
+```
+
+### Post-Development Validation (MANDATORY)
+```bash
+# 1. Format and lint
+black . && make lint
+
+# 2. Verify module structure
+python -c "from rest_api.server import app; print('Imports OK')"
+
+# 3. Run smoke test
+python mock_snmp_agent.py --help > /dev/null && echo "CLI OK"
+```
+
+### Known Issues to Avoid
+1. **Never** import Path twice in the same file
+2. **Always** use specific exceptions, not `except Exception:`
+3. **Avoid** Docker packages: `snmp-mibs-downloader`, `docker.io`
+4. **Always** check ports before starting services
+5. **Ensure** `rest_api/__main__.py` exists for module execution
+6. **Use** try/finally blocks for process cleanup
 
 ## API Development Workflow
 
-### Adding New API Endpoints
-1. **Define Pydantic models** in `rest_api/models.py`
-2. **Implement business logic** in `rest_api/controllers.py`
-3. **Add FastAPI routes** in appropriate endpoint modules
-4. **Write comprehensive tests** in `tests/test_*.py`
-5. **Update API documentation** in `REST_API_DOCUMENTATION.md`
-6. **Run test suite** with `python run_api_tests.py all`
+### Adding New Endpoints
+1. Define Pydantic models in `rest_api/models.py`
+2. Implement logic in `rest_api/controllers.py`
+3. Add routes to appropriate module
+4. Write tests in `tests/test_*.py`
+5. Run `python run_api_tests.py all`
 
-### WebSocket Development
-1. **Add channel support** in `rest_api/websocket.py`
-2. **Implement message broadcasting** in controllers
-3. **Create WebSocket tests** in `tests/test_websocket_integration.py`
-4. **Test real-time functionality** with integration tests
+### WebSocket Features
+1. Add channel in `rest_api/websocket.py`
+2. Implement broadcasting in controllers
+3. Test with `tests/test_websocket_integration.py`
 
-### Simulation Behavior Development
-1. **Define behavior configuration** in YAML schema
-2. **Implement behavior logic** in `behaviors/` directory
-3. **Add scenario tests** in `tests/test_simulation_scenarios.py`
-4. **Validate with test execution** using API endpoints
+### Test Categories
+- **endpoints**: Basic API functionality
+- **websockets**: Real-time streaming
+- **scenarios**: Simulation testing
+- **export**: Data export/import
 
-## Build and Distribution
+## Emergency Recovery
+
+If CI/Docker fails:
 ```bash
-# Build package
-make build        # Clean and build package
-python -m build   # Direct build command
-
-# Docker operations
-make docker           # Build standard Docker image
-make docker-extended  # Build extended Docker image with additional features
-make docker-test      # Test Docker image functionality
-
-# Cleanup
-make clean           # Remove build artifacts, cache, and temporary files
+python cleanup_ports.py              # Clear ports
+black . && make lint                 # Fix formatting
+# Check Docker package names are valid for Ubuntu
+# Verify rest_api/__main__.py exists
 ```
 
-## Claude Memory Integration for Recurring Issues
+Common CI failures:
+- Port conflicts (use cleanup_ports.py)
+- Import errors (check module structure)
+- Formatting (run black)
+- Broad exceptions (use specific ones)
 
-### Pre-Development Checklist (ALWAYS RUN BEFORE CHANGES)
-**Claude MUST run these commands before making ANY code changes:**
-```bash
-# 1. MANDATORY: Check for running processes on common ports
-python cleanup_ports.py
+## CI/CD Troubleshooting
 
-# 2. MANDATORY: Format all Python code before editing
-black .
+### GitHub Actions Issues
 
-# 3. MANDATORY: Run basic pylint check
-make lint
+1. **Deprecated Action Versions**
+   - Update `actions/upload-artifact@v3` to `@v4`
+   - Update `actions/setup-python@v4` to `@v5`
+   - Check other actions for deprecation warnings
 
-# 4. MANDATORY: Verify REST API server module exists
-python -c "import rest_api.server; print('REST API server module OK')"
-```
+2. **Hanging Tests**
+   - `test_prd_requirements.py` - Ensure proper subprocess cleanup
+   - Add timeouts to subprocess.wait() calls
+   - Use try/finally with kill() fallback:
+   ```python
+   try:
+       process.wait(timeout=5)
+   except subprocess.TimeoutExpired:
+       process.kill()
+       process.wait()
+   ```
 
-### Post-Development Validation (ALWAYS RUN AFTER CHANGES)
-**Claude MUST run these commands after making ANY code changes:**
-```bash
-# 1. MANDATORY: Format and lint all changed files
-black . && make lint
+3. **Indentation Errors**
+   - Ensure try/except/finally blocks are properly indented inside context managers
+   - Run `black .` before committing
 
-# 2. MANDATORY: Test REST API server startup
-python -c "from rest_api.server import app; print('REST API server imports OK')"
-
-# 3. MANDATORY: Quick smoke test
-python mock_snmp_agent.py --help > /dev/null && echo "CLI OK"
-
-# 4. MANDATORY: Clean up any test processes
-python cleanup_ports.py
-```
-
-### Known Problematic Patterns to AVOID
-1. **Import Issues**: Never import Path twice in same file
-2. **Exception Handling**: Always use specific exceptions, never `except Exception:`
-3. **Docker Packages**: Avoid `snmp-mibs-downloader`, `net-snmp-utils`, `docker.io`
-4. **Process Management**: Always use try/finally blocks for process cleanup
-5. **Port Conflicts**: Always check ports before starting services
-6. **Module Structure**: Ensure `rest_api/__main__.py` exists for `python -m` commands
-
-### Docker Build Validation
-**Before committing Docker changes, Claude MUST test:**
-```bash
-# Test all Docker configurations
-docker build -f Dockerfile .
-docker build -f Dockerfile.enhanced .
-docker build -f Dockerfile.test-runner .
-```
-
-### Common Error Patterns to Remember
-- **Pylint failures**: Usually formatting (black), imports, or broad exceptions
-- **REST API failures**: Missing `__main__.py` or app export issues
-- **Docker failures**: Invalid package names or missing dependencies
-- **Test failures**: Port conflicts or timing issues (use 10+ second delays)
-- **CI failures**: YAML import errors or dependency installation problems
-
-### Emergency Fixes
-If recurring issues appear, Claude should immediately:
-1. Run `python cleanup_ports.py` to clear port conflicts
-2. Run `black . && make lint` to fix formatting
-3. Check `rest_api/__main__.py` exists with proper app export
-4. Verify all Docker package names are valid for Ubuntu
+4. **Process Cleanup**
+   - Always use context managers (`with`) for subprocess.Popen
+   - Implement proper cleanup in finally blocks
+   - Kill orphan processes: `snmpsim-command-responder`

@@ -55,7 +55,12 @@ def run_basic_test():
         finally:
             print("\nStopping simulator...")
             sim.terminate()
-            sim.wait()
+            try:
+                sim.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                print("Simulator didn't stop gracefully, killing...")
+                sim.kill()
+                sim.wait()
             print("Done!")
 
 
@@ -87,89 +92,115 @@ def test_basic_snmp_functionality():
             print("STDERR:", stderr.decode())
             return
 
-    try:
-        # Test SNMPv1 GET
-        print("\n1. Testing SNMPv1 GET:")
-        result = subprocess.run(
-            ["snmpget", "-v1", "-c", "public", "127.0.0.1:11611", "1.3.6.1.2.1.1.1.0"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        print(f"   Result: {result.stdout.strip()}")
-        if result.stderr:
-            print(f"   Error: {result.stderr.strip()}")
-        print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
+        try:
+            # Test SNMPv1 GET
+            print("\n1. Testing SNMPv1 GET:")
+            result = subprocess.run(
+                [
+                    "snmpget",
+                    "-v1",
+                    "-c",
+                    "public",
+                    "127.0.0.1:11611",
+                    "1.3.6.1.2.1.1.1.0",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            print(f"   Result: {result.stdout.strip()}")
+            if result.stderr:
+                print(f"   Error: {result.stderr.strip()}")
+            print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
 
-        # Test SNMPv2c GET
-        print("\n2. Testing SNMPv2c GET:")
-        result = subprocess.run(
-            ["snmpget", "-v2c", "-c", "public", "127.0.0.1:11611", "1.3.6.1.2.1.1.1.0"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        print(f"   Result: {result.stdout.strip()}")
-        print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
+            # Test SNMPv2c GET
+            print("\n2. Testing SNMPv2c GET:")
+            result = subprocess.run(
+                [
+                    "snmpget",
+                    "-v2c",
+                    "-c",
+                    "public",
+                    "127.0.0.1:11611",
+                    "1.3.6.1.2.1.1.1.0",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            print(f"   Result: {result.stdout.strip()}")
+            print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
 
-        # Test GETNEXT
-        print("\n3. Testing GETNEXT:")
-        result = subprocess.run(
-            ["snmpgetnext", "-v2c", "-c", "public", "127.0.0.1:11611", "1.3.6.1.2.1.1"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        print(f"   Result: {result.stdout.strip()}")
-        print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
+            # Test GETNEXT
+            print("\n3. Testing GETNEXT:")
+            result = subprocess.run(
+                [
+                    "snmpgetnext",
+                    "-v2c",
+                    "-c",
+                    "public",
+                    "127.0.0.1:11611",
+                    "1.3.6.1.2.1.1",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            print(f"   Result: {result.stdout.strip()}")
+            print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
 
-        # Test GETBULK
-        print("\n4. Testing GETBULK:")
-        result = subprocess.run(
-            [
-                "snmpbulkget",
-                "-v2c",
-                "-c",
-                "public",
-                "-Cn0",
-                "-Cr5",  # non-repeaters=0, max-repetitions=5
-                "127.0.0.1:11611",
-                "1.3.6.1.2.1.1",
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        print(f"   Result (first line): {result.stdout.split(chr(10))[0]}")
-        print(f"   Success: {len(result.stdout.strip().split(chr(10))) >= 5}")
+            # Test GETBULK
+            print("\n4. Testing GETBULK:")
+            result = subprocess.run(
+                [
+                    "snmpbulkget",
+                    "-v2c",
+                    "-c",
+                    "public",
+                    "-Cn0",
+                    "-Cr5",  # non-repeaters=0, max-repetitions=5
+                    "127.0.0.1:11611",
+                    "1.3.6.1.2.1.1",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            print(f"   Result (first line): {result.stdout.split(chr(10))[0]}")
+            print(f"   Success: {len(result.stdout.strip().split(chr(10))) >= 5}")
 
-        # Test SNMPv3
-        print("\n5. Testing SNMPv3 (noAuthNoPriv):")
-        result = subprocess.run(
-            [
-                "snmpget",
-                "-v3",
-                "-l",
-                "noAuthNoPriv",
-                "-u",
-                "simulator",
-                "127.0.0.1:11611",
-                "1.3.6.1.2.1.1.1.0",
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        print(f"   Result: {result.stdout.strip()}")
-        print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
+            # Test SNMPv3
+            print("\n5. Testing SNMPv3 (noAuthNoPriv):")
+            result = subprocess.run(
+                [
+                    "snmpget",
+                    "-v3",
+                    "-l",
+                    "noAuthNoPriv",
+                    "-u",
+                    "simulator",
+                    "127.0.0.1:11611",
+                    "1.3.6.1.2.1.1.1.0",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            print(f"   Result: {result.stdout.strip()}")
+            print(f"   Success: {'SNMPv2-MIB::sysDescr.0' in result.stdout}")
 
-    except Exception as exc:
-        print(f"Error during testing: {exc}")
-    finally:
-        # Stop the simulator
-        simulator_process.terminate()
-        simulator_process.wait()
-        print("\nSimulator stopped.")
+        except Exception as exc:
+            print(f"Error during testing: {exc}")
+        finally:
+            # Stop the simulator
+            simulator_process.terminate()
+            try:
+                simulator_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                print("Simulator didn't stop gracefully, killing...")
+                simulator_process.kill()
+                simulator_process.wait()
+            print("\nSimulator stopped.")
 
 
 def check_snmp_tools():
