@@ -60,33 +60,9 @@ jobs:
       run: |
         mypy rest_api --ignore-missing-imports
 
-    - name: Run unit tests
+    - name: Run API tests
       run: |
-        python run_api_tests.py unit --coverage
-      env:
-        PYTHONPATH: .
-
-    - name: Run API endpoint tests
-      run: |
-        python run_api_tests.py endpoints --verbose
-      env:
-        PYTHONPATH: .
-
-    - name: Run WebSocket tests
-      run: |
-        python run_api_tests.py websockets --verbose
-      env:
-        PYTHONPATH: .
-
-    - name: Run simulation scenario tests
-      run: |
-        python run_api_tests.py scenarios --verbose
-      env:
-        PYTHONPATH: .
-
-    - name: Run export/import tests
-      run: |
-        python run_api_tests.py export --verbose
+        python run_api_tests.py all --coverage --verbose
       env:
         PYTHONPATH: .
 
