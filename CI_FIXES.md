@@ -78,10 +78,10 @@ find . -name "*.py" -not -path "./venv/*" -not -path "./.venv/*" | head -10 | xa
 
 ```yaml
 # Before
-python test_basic.py  # ❌ Fails if file doesn't exist
+python test_prd_requirements.py --basic  # ❌ Fails if file doesn't exist
 
 # After
-if [ -f test_basic.py ]; then python test_basic.py; else echo "test_basic.py not found, skipping"; fi
+if [ -f test_prd_requirements.py --basic ]; then python test_prd_requirements.py --basic; else echo "test_prd_requirements.py --basic not found, skipping"; fi
 ```
 
 ### 6. **Docker Test Reliability**
@@ -160,7 +160,7 @@ find . -name "*.py" -not -path "./venv/*" -not -path "./.venv/*" | head -10 | xa
 python run_api_tests.py all --coverage --verbose
 
 # Test basic functionality
-if [ -f test_basic.py ]; then python test_basic.py; fi
+if [ -f test_prd_requirements.py --basic ]; then python test_prd_requirements.py --basic; fi
 
 # Test YAML import fix
 python -c "

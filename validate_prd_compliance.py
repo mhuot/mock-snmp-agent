@@ -16,11 +16,68 @@ import json
 import yaml
 import requests
 import websocket
+import argparse
 from pathlib import Path
 from dataclasses import dataclass, asdict
 from typing import List, Dict, Any, Optional
 import threading
 import signal
+
+def validate_test_setup():
+    """Validate test setup - equivalent to validate_test_setup.py functionality"""
+    print("Mock SNMP Agent - Test Setup Validation")
+    print("=" * 50)
+    
+    all_passed = True
+    
+    # Check Docker setup
+    print("\nChecking Docker setup...")
+    try:
+        result = subprocess.run(['docker', '--version'], capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"✓ Docker: {result.stdout.strip()}")
+        else:
+            print("✗ Docker: Not available")
+            all_passed = False
+    except:
+        print("✗ Docker: Not available")
+        all_passed = False
+    
+    # Check key files
+    print("\nValidating configuration files...")
+    key_files = [
+        ('config/comprehensive.yaml', 'Comprehensive Test Config'),
+        ('config/api_config.yaml', 'REST API Config'),
+        ('docker-compose.testing.yml', 'Docker Compose Test File'),
+        ('test_prd_requirements.py', 'Main Test Script'),
+    ]
+    
+    for file_path, description in key_files:
+        if Path(file_path).exists():
+            print(f"✓ {description}: {file_path}")
+        else:
+            print(f"✗ {description}: {file_path} (missing)")
+            all_passed = False
+    
+    # Check Python dependencies
+    print("\nChecking Python dependencies...")
+    deps = ['yaml', 'requests', 'fastapi']
+    for dep in deps:
+        try:
+            __import__(dep)
+            print(f"✓ {dep}: Available")
+        except ImportError:
+            print(f"✗ {dep}: Not available")
+            all_passed = False
+    
+    print("\n" + "=" * 50)
+    if all_passed:
+        print("✅ All validations passed - setup is ready!")
+        return True
+    else:
+        print("❌ Some validations failed - fix issues before running tests.")
+        return False
+
 
 @dataclass
 class TestResult:
@@ -493,6 +550,17 @@ class PRDComplianceValidator:
 
 def main():
     """Main function"""
+    parser = argparse.ArgumentParser(description="PRD Compliance Validation")
+    parser.add_argument("--setup-check", action="store_true",
+                       help="Run test setup validation only (equivalent to validate_test_setup.py)")
+    args = parser.parse_args()
+    
+    if args.setup_check:
+        # Run setup validation only (equivalent to validate_test_setup.py)
+        success = validate_test_setup()
+        return 0 if success else 1
+    
+    # Run full PRD compliance validation
     if not Path("mock_snmp_agent.py").exists():
         print("❌ mock_snmp_agent.py not found. Run from project root directory.")
         return 1

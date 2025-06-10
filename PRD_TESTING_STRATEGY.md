@@ -31,7 +31,7 @@ This document outlines the comprehensive testing strategy to validate that all P
 
 ```bash
 # Fast validation of core requirements (~30 seconds)
-python simple_prd_test.py
+python performance_test.py --simple
 ```
 
 ### **Method 3: Comprehensive PRD Compliance (Detailed Analysis)**
@@ -83,7 +83,7 @@ python test_prd_requirements.py
 python performance_test.py
 
 # Quick performance validation
-python quick_performance_test.py
+python performance_test.py --quick
 ```
 
 ### **Method 5: Docker Integration Testing**
@@ -102,7 +102,7 @@ docker compose -f docker-compose.test.yml up --abort-on-container-exit
 | Test Method | Duration | Coverage | Detail Level | Use Case |
 |-------------|----------|----------|--------------|----------|
 | **Complete Suite** (`validate_all_requirements.sh`) | ~5-8 min | 100% | Comprehensive | Release validation |
-| **Quick PRD** (`simple_prd_test.py`) | ~30 sec | 80% | Basic | Development checks |
+| **Quick PRD** (`performance_test.py --simple`) | ~30 sec | 80% | Basic | Development checks |
 | **Comprehensive PRD** (`validate_prd_compliance.py`) | ~2-3 min | 90% | Detailed | CI/CD validation |
 | **API Tests** (`run_api_tests.py all`) | ~3-4 min | 95% | API-focused | API development |
 | **Performance** (`performance_test.py`) | ~2 min | Performance | Metrics | Load testing |
@@ -110,7 +110,7 @@ docker compose -f docker-compose.test.yml up --abort-on-container-exit
 ### **Recommended Workflow**
 ```bash
 # During development (frequent)
-python simple_prd_test.py
+python performance_test.py --simple
 
 # Before committing (occasional)
 python validate_prd_compliance.py

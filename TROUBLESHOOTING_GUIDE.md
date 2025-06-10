@@ -110,7 +110,7 @@ snmpget -v2c -c public -d localhost:11611 1.3.6.1.2.1.1.1.0
 **Diagnosis:**
 ```bash
 # Run performance test
-python quick_performance_test.py
+python performance_test.py --quick
 
 # Check system resources
 top

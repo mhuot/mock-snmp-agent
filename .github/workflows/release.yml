@@ -30,7 +30,7 @@ jobs:
 
     - name: Run tests
       run: |
-        python test_basic.py
+        python test_prd_requirements.py --basic
         python test_prd_requirements.py
 
     - name: Generate changelog

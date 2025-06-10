@@ -8,8 +8,48 @@ import time
 import sys
 import os
 import warnings
+import argparse
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+
+def run_basic_test():
+    """Basic SNMP test - equivalent to test_basic.py functionality"""
+    print("Starting SNMP simulator...")
+    
+    env = os.environ.copy()
+    env["PYTHONWARNINGS"] = "ignore"
+    
+    with subprocess.Popen(
+        [
+            "snmpsim-command-responder",
+            "--data-dir=./data",
+            "--agent-udpv4-endpoint=127.0.0.1:11611",
+            "--quiet",
+        ],
+        env=env,
+    ) as sim:
+        # Give it time to start
+        time.sleep(5)
+
+        try:
+            print("\nTesting SNMP GET...")
+            result = subprocess.run(
+                ["snmpget", "-v2c", "-c", "public", "localhost:11611", "1.3.6.1.2.1.1.1.0"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            print(f"STDOUT: {result.stdout}")
+            print(f"STDERR: {result.stderr}")
+            print(f"Return code: {result.returncode}")
+
+        finally:
+            print("\nStopping simulator...")
+            sim.terminate()
+            sim.wait()
+            print("Done!")
 
 
 def test_basic_snmp_functionality():
@@ -144,16 +184,26 @@ def check_snmp_tools():
 
 
 if __name__ == "__main__":
-    print("Mock SNMP Agent PRD Requirements Test")
-    print("=====================================\n")
+    parser = argparse.ArgumentParser(description="Mock SNMP Agent PRD Requirements Test")
+    parser.add_argument("--basic", action="store_true", 
+                       help="Run basic SNMP test only (equivalent to test_basic.py)")
+    args = parser.parse_args()
 
-    # Check for SNMP tools
-    if not check_snmp_tools():
-        print("\nPlease install net-snmp tools:")
-        print("  macOS: brew install net-snmp")
-        print("  Ubuntu/Debian: apt-get install snmp")
-        print("  RHEL/CentOS: yum install net-snmp-utils")
-        sys.exit(1)
+    if args.basic:
+        # Run basic test only (equivalent to test_basic.py)
+        run_basic_test()
+    else:
+        # Run full PRD requirements test
+        print("Mock SNMP Agent PRD Requirements Test")
+        print("=====================================\n")
 
-    # Run tests
-    test_basic_snmp_functionality()
+        # Check for SNMP tools
+        if not check_snmp_tools():
+            print("\nPlease install net-snmp tools:")
+            print("  macOS: brew install net-snmp")
+            print("  Ubuntu/Debian: apt-get install snmp")
+            print("  RHEL/CentOS: yum install net-snmp-utils")
+            sys.exit(1)
+
+        # Run tests
+        test_basic_snmp_functionality()
