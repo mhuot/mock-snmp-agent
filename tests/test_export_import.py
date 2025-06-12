@@ -17,10 +17,10 @@ from unittest.mock import Mock, patch
 import pytest
 import yaml
 
-from src.rest_api.controllers import MockSNMPAgentController
-from src.rest_api.export_import import DataExporter, DataImporter, ExportRequest
-from src.rest_api.query_endpoints import DataHistoryManager
-from src.rest_api.simulation_control import (
+from rest_api.controllers import MockSNMPAgentController
+from rest_api.export_import import DataExporter, DataImporter, ExportRequest
+from rest_api.query_endpoints import DataHistoryManager
+from rest_api.simulation_control import (
     BehaviorConfig,
     SimulationScenarioManager,
     TestScenario,

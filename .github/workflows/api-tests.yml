@@ -42,14 +42,17 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y snmp snmp-mibs-downloader
 
-    - name: Install Python dependencies
+    - name: Create and activate virtual environment
       run: |
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-test.txt
 
     - name: Lint with flake8
       run: |
+        source venv/bin/activate
         # Stop the build if there are Python syntax errors or undefined names
         flake8 src/rest_api --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
@@ -58,13 +61,13 @@ jobs:
     - name: Type checking with mypy
       continue-on-error: true
       run: |
+        source venv/bin/activate
         mypy src/rest_api --ignore-missing-imports
 
     - name: Run API tests
       run: |
-        python scripts/testing/run_api_tests.py all --coverage --verbose
-      env:
-        PYTHONPATH: src
+        source venv/bin/activate
+        PYTHONPATH=src python scripts/testing/run_api_tests.py all --coverage --verbose
 
     - name: Generate test report
       run: |
@@ -105,15 +108,16 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y snmp snmp-mibs-downloader
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-test.txt
 
     - name: Run integration tests
       run: |
-        python scripts/testing/run_api_tests.py --integration
-      env:
-        PYTHONPATH: src
+        source venv/bin/activate
+        PYTHONPATH=src python scripts/testing/run_api_tests.py --integration
 
   security-scan:
     runs-on: ubuntu-latest
@@ -128,16 +132,20 @@ jobs:
 
     - name: Install dependencies
       run: |
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install bandit safety
 
     - name: Run security scan with bandit
       run: |
+        source venv/bin/activate
         bandit -r src/rest_api -f json -o bandit-report.json
       continue-on-error: true
 
     - name: Check dependencies for vulnerabilities
       run: |
+        source venv/bin/activate
         safety check --json --output safety-report.json
       continue-on-error: true
 
@@ -164,6 +172,8 @@ jobs:
 
     - name: Install dependencies
       run: |
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-test.txt
@@ -192,10 +202,11 @@ jobs:
         EOF
 
         # Start API server in background
-        python -c "
+        source venv/bin/activate
+        PYTHONPATH=src python -c "
         import asyncio
         import uvicorn
-        from src.rest_api.server import SNMPAgentAPIServer
+        from rest_api.server import SNMPAgentAPIServer
 
         async def run_server():
             server = SNMPAgentAPIServer()
@@ -210,9 +221,8 @@ jobs:
         sleep 5
 
         # Run load test
+        source venv/bin/activate
         locust --host=http://127.0.0.1:8080 --users 10 --spawn-rate 2 --run-time 30s --headless --html performance-report.html
-      env:
-        PYTHONPATH: src
 
     - name: Upload performance report
       uses: actions/upload-artifact@v4

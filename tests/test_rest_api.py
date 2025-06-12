@@ -13,10 +13,10 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from src.rest_api.controllers import MockSNMPAgentController
+from rest_api.controllers import MockSNMPAgentController
 
 # Import modules to test
-from src.rest_api.models import (
+from rest_api.models import (
     AgentStatus,
     AgentStatusResponse,
     ConfigurationResponse,
@@ -26,7 +26,7 @@ from src.rest_api.models import (
     OIDListResponse,
     RestartResponse,
 )
-from src.rest_api.server import SNMPAgentAPIServer
+from rest_api.server import SNMPAgentAPIServer
 
 
 class TestModels:

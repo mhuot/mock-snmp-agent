@@ -96,12 +96,13 @@ Repository = "https://github.com/mhuot/snmpsim.git"
 Changelog = "https://github.com/mhuot/snmpsim/releases"
 
 [project.scripts]
-mock-snmp-agent = "src.mock_snmp_agent:main"
+mock-snmp-agent = "mock_snmp_agent:main"
 api-test-runner = "scripts.testing.run_api_tests:main"
 
 [tool.setuptools]
 py-modules = ["config"]
 packages = ["src", "tests", "scripts"]
+package-dir = {"" = "src"}
 
 [tool.black]
 line-length = 88
@@ -142,13 +143,15 @@ python_functions = ["test_*"]
 timeout = 300
 
 [tool.coverage.run]
-source = ["."]
+source = ["src"]
 omit = [
     "venv/*",
     "*/venv/*",
     "__pycache__/*",
     "*/site-packages/*",
     "setup.py",
+    "tests/*",
+    "scripts/*",
 ]
 
 [tool.coverage.report]

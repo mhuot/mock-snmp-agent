@@ -36,6 +36,8 @@ jobs:
 
     - name: Install Python dependencies
       run: |
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
@@ -45,6 +47,7 @@ jobs:
 
     - name: Run pre-commit hooks
       run: |
+        source venv/bin/activate
         # Install pre-commit hooks
         pre-commit install-hooks
 
@@ -53,14 +56,15 @@ jobs:
 
     - name: Run pylint
       run: |
+        source venv/bin/activate
         # Run pylint on main Python files with proper error handling
         python_files=(
-          "mock_snmp_agent.py"
-          "rest_api/server.py"
-          "rest_api/controllers.py"
+          "src/mock_snmp_agent.py"
+          "src/rest_api/server.py"
+          "src/rest_api/controllers.py"
           "scripts/testing/test_prd_requirements.py"
-          "performance_test.py"
-          "validate_prd_compliance.py"
+          "scripts/testing/performance_test.py"
+          "scripts/testing/validate_prd_compliance.py"
         )
 
         for file in "${python_files[@]}"; do
@@ -74,15 +78,18 @@ jobs:
 
     - name: Run basic functionality tests
       run: |
-        python scripts/testing/test_prd_requirements.py --basic
+        source venv/bin/activate
+        PYTHONPATH=src python scripts/testing/test_prd_requirements.py --basic
 
     - name: Run PRD requirements tests
       run: |
-        if [ -f scripts/testing/test_prd_requirements.py ]; then python scripts/testing/test_prd_requirements.py; else echo "test_prd_requirements.py not found, skipping"; fi
+        source venv/bin/activate
+        if [ -f scripts/testing/test_prd_requirements.py ]; then PYTHONPATH=src python scripts/testing/test_prd_requirements.py; else echo "test_prd_requirements.py not found, skipping"; fi
 
     - name: Run performance tests
       run: |
-        if [ -f performance_test.py ]; then python performance_test.py; else echo "performance_test.py not found, skipping"; fi
+        source venv/bin/activate
+        if [ -f scripts/testing/performance_test.py ]; then PYTHONPATH=src python scripts/testing/performance_test.py; else echo "performance_test.py not found, skipping"; fi
 
   docker:
     runs-on: ubuntu-latest
@@ -152,11 +159,14 @@ jobs:
 
     - name: Install security tools
       run: |
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install bandit safety
 
     - name: Run bandit security scan
       run: |
+        source venv/bin/activate
         # Run bandit with proper exclusions and error handling
         echo "Running bandit security scan..."
         bandit -r . --exclude=tests,venv,.venv,deprecated -f json -o bandit-report.json || echo "Bandit scan completed with findings"
@@ -166,6 +176,7 @@ jobs:
 
     - name: Check for known vulnerabilities
       run: |
+        source venv/bin/activate
         # Install requirements if they exist
         if [ -f requirements-dev.txt ]; then
           pip install -r requirements-dev.txt || echo "Some dev dependencies failed to install"

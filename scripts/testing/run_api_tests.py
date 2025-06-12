@@ -87,7 +87,7 @@ def run_tests(test_type="all", verbose=False, coverage=False, quiet=False):
         cmd.extend(["-q"])
 
     if coverage:
-        cmd.extend(["--cov=rest_api", "--cov-report=html", "--cov-report=term"])
+        cmd.extend(["--cov=src/rest_api", "--cov-report=html", "--cov-report=term"])
 
     # Additional options
     cmd.extend(
@@ -124,7 +124,7 @@ def start_test_server():
     test_server_script = """
 import asyncio
 import uvicorn
-from src.rest_api.server import SNMPAgentAPIServer
+from rest_api.server import SNMPAgentAPIServer
 
 async def main():
     server = SNMPAgentAPIServer(
@@ -210,7 +210,7 @@ def generate_test_report():
         "tests/test_websocket_integration.py",
         "tests/test_simulation_scenarios.py",
         "tests/test_export_import.py",
-        "--cov=rest_api",
+        "--cov=src/rest_api",
         "--cov-report=html:test-reports/coverage",
         "--cov-report=xml:test-reports/coverage.xml",
         "--cov-report=term",
@@ -280,9 +280,9 @@ def main():
         print("=" * 50)
 
     # Check environment
-    if not Path("rest_api").exists():
+    if not Path("src/rest_api").exists():
         if not args.quiet:
-            print("❌ rest_api module not found. Run from project root directory.")
+            print("❌ src/rest_api module not found. Run from project root directory.")
         return 1
 
     success = True

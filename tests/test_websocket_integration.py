@@ -16,8 +16,8 @@ import pytest
 import websockets
 from websockets.exceptions import ConnectionClosed
 
-from src.rest_api.controllers import MockSNMPAgentController
-from src.rest_api.websocket import ConnectionManager, MetricsCollector, manager
+from rest_api.controllers import MockSNMPAgentController
+from rest_api.websocket import ConnectionManager, MetricsCollector, manager
 
 
 class MockWebSocket:
