@@ -62,7 +62,7 @@ jobs:
 
     - name: Run API tests
       run: |
-        python run_api_tests.py all --coverage --verbose
+        python scripts/testing/run_api_tests.py all --coverage --verbose
       env:
         PYTHONPATH: src
 
@@ -111,7 +111,7 @@ jobs:
 
     - name: Run integration tests
       run: |
-        python run_api_tests.py --integration
+        python scripts/testing/run_api_tests.py --integration
       env:
         PYTHONPATH: src
 
