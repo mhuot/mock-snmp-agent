@@ -51,26 +51,26 @@ jobs:
     - name: Lint with flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
-        flake8 rest_api --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src/rest_api --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
-        flake8 rest_api --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        flake8 src/rest_api --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
     - name: Type checking with mypy
       continue-on-error: true
       run: |
-        mypy rest_api --ignore-missing-imports
+        mypy src/rest_api --ignore-missing-imports
 
     - name: Run API tests
       run: |
         python run_api_tests.py all --coverage --verbose
       env:
-        PYTHONPATH: .
+        PYTHONPATH: src
 
     - name: Generate test report
       run: |
         echo "Test report generation completed as part of coverage"
       env:
-        PYTHONPATH: .
+        PYTHONPATH: src
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -113,7 +113,7 @@ jobs:
       run: |
         python run_api_tests.py --integration
       env:
-        PYTHONPATH: .
+        PYTHONPATH: src
 
   security-scan:
     runs-on: ubuntu-latest
@@ -133,7 +133,7 @@ jobs:
 
     - name: Run security scan with bandit
       run: |
-        bandit -r rest_api -f json -o bandit-report.json
+        bandit -r src/rest_api -f json -o bandit-report.json
       continue-on-error: true
 
     - name: Check dependencies for vulnerabilities
@@ -195,7 +195,7 @@ jobs:
         python -c "
         import asyncio
         import uvicorn
-        from rest_api.server import SNMPAgentAPIServer
+        from src.rest_api.server import SNMPAgentAPIServer
 
         async def run_server():
             server = SNMPAgentAPIServer()
@@ -212,7 +212,7 @@ jobs:
         # Run load test
         locust --host=http://127.0.0.1:8080 --users 10 --spawn-rate 2 --run-time 30s --headless --html performance-report.html
       env:
-        PYTHONPATH: .
+        PYTHONPATH: src
 
     - name: Upload performance report
       uses: actions/upload-artifact@v4

@@ -83,7 +83,7 @@ repos:
     # Validate REST API module structure
     -   id: check-rest-api-structure
         name: Validate REST API module structure
-        entry: python3 -c "import os; exit(0 if os.path.exists('rest_api/__main__.py') else 1)"
+        entry: python3 -c "import os; exit(0 if os.path.exists('src/rest_api/__main__.py') else 1)"
         language: system
         pass_filenames: false
 

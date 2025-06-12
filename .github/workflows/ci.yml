@@ -58,7 +58,7 @@ jobs:
           "mock_snmp_agent.py"
           "rest_api/server.py"
           "rest_api/controllers.py"
-          "test_prd_requirements.py"
+          "scripts/testing/test_prd_requirements.py"
           "performance_test.py"
           "validate_prd_compliance.py"
         )
@@ -74,11 +74,11 @@ jobs:
 
     - name: Run basic functionality tests
       run: |
-        python test_prd_requirements.py --basic
+        python scripts/testing/test_prd_requirements.py --basic
 
     - name: Run PRD requirements tests
       run: |
-        if [ -f test_prd_requirements.py ]; then python test_prd_requirements.py; else echo "test_prd_requirements.py not found, skipping"; fi
+        if [ -f scripts/testing/test_prd_requirements.py ]; then python scripts/testing/test_prd_requirements.py; else echo "test_prd_requirements.py not found, skipping"; fi
 
     - name: Run performance tests
       run: |
