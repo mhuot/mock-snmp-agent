@@ -13,8 +13,8 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from rest_api.controllers import MockSNMPAgentController
-from rest_api.simulation_control import (
+from src.rest_api.controllers import MockSNMPAgentController
+from src.rest_api.simulation_control import (
     BehaviorConfig,
     ScenarioStatus,
     SimulationScenarioManager,

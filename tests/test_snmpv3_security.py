@@ -14,7 +14,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # Import modules to test
-from behaviors.snmpv3_security import (
+from src.behaviors.snmpv3_security import (
     SecurityFailureConfig,
     SNMPv3SecuritySimulator,
     create_security_config_from_dict,

@@ -31,7 +31,7 @@ Related to #(issue number)
 ```bash
 # List the commands used to test this change
 python test_prd_requirements.py
-python performance_test.py
+python scripts/testing/performance_test.py
 ```
 
 **Test results:**

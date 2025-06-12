@@ -96,12 +96,12 @@ Repository = "https://github.com/mhuot/snmpsim.git"
 Changelog = "https://github.com/mhuot/snmpsim/releases"
 
 [project.scripts]
-mock-snmp-agent = "mock_snmp_agent:main"
-api-test-runner = "run_api_tests:main"
+mock-snmp-agent = "src.mock_snmp_agent:main"
+api-test-runner = "scripts.testing.run_api_tests:main"
 
 [tool.setuptools]
-py-modules = ["mock_snmp_agent", "test_basic", "test_prd_requirements", "performance_test", "run_api_tests"]
-packages = ["rest_api", "tests", "behaviors"]
+py-modules = ["config"]
+packages = ["src", "tests", "scripts"]
 
 [tool.black]
 line-length = 88

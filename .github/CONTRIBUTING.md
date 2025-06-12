@@ -48,7 +48,7 @@ We welcome contributions to the Mock SNMP Agent project! This document provides 
 4. **Run tests:**
    ```bash
    python test_prd_requirements.py
-   python performance_test.py
+   python scripts/testing/performance_test.py
    ```
 
 ## 📝 Code Style

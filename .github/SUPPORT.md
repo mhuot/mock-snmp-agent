@@ -61,7 +61,7 @@ Run these commands to help diagnose issues:
 python test_prd_requirements.py
 
 # Check performance
-python performance_test.py
+python scripts/testing/performance_test.py
 
 # Verify installation
 pip show snmpsim-lextudio

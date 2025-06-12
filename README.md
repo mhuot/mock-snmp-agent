@@ -42,7 +42,7 @@ The Mock SNMP Agent is specifically designed to simulate and validate solutions 
 7. **Dynamic Value Changes**: Simulating real-time data fluctuations and OID modifications
 8. **Authentication & Privacy Failures**: Validating secure SNMPv3 implementation under incorrect credentials
 
-For detailed scenarios and how to test each of these challenges, see the [Advanced Testing Scenarios Guide](ADVANCED_TESTING_GUIDE.md).
+For detailed scenarios and how to test each of these challenges, see the [Advanced Testing Scenarios Guide](docs/guides/ADVANCED_TESTING_GUIDE.md).
 
 ## 🚀 Quick Start
 
@@ -94,25 +94,24 @@ For detailed installation options (local Python, extended Docker configs) and mo
 Explore the full capabilities and documentation:
 
 ### **API Integration & Real-time Monitoring**
-- **[REST API Documentation](REST_API_DOCUMENTATION.md)** - Comprehensive API reference and examples
-- **[WebSocket Real-time Monitoring](REST_API_DOCUMENTATION.md#websocket-endpoints)** - Live metrics and activity streaming
+- **[REST API Documentation](docs/api/REST_API_DOCUMENTATION.md)** - Comprehensive API reference and examples
+- **[WebSocket Real-time Monitoring](docs/api/REST_API_DOCUMENTATION.md#websocket-endpoints)** - Live metrics and activity streaming
 
 ### **Configuration & Advanced Testing**
-- **[Configuration Guide](CONFIGURATION_GUIDE.md)** - Detailed YAML examples and configuration reference
-- **[Advanced Testing Scenarios Guide](ADVANCED_TESTING_GUIDE.md)** - In-depth guide on testing the 8 major SNMP monitoring challenges
-- **[Advanced Usage Guide](ADVANCED_USAGE_GUIDE.md)** - Community strings, SNMPv3 configuration, monitoring tool integration
+- **[Configuration Guide](docs/guides/CONFIGURATION_GUIDE.md)** - Detailed YAML examples and configuration reference
+- **[Advanced Testing Scenarios Guide](docs/guides/ADVANCED_TESTING_GUIDE.md)** - In-depth guide on testing the 8 major SNMP monitoring challenges
+- **[Advanced Usage Guide](docs/guides/ADVANCED_USAGE_GUIDE.md)** - Community strings, SNMPv3 configuration, monitoring tool integration
 
 ### **Testing & Validation**
-- **[API Testing Guide](API_TESTING_GUIDE.md)** - How to run the automated API test suite and interpret results
-- **[Performance Results](PERFORMANCE_RESULTS.md)** - Detailed performance benchmarks and validation
+- **[API Testing Guide](docs/api/API_TESTING_GUIDE.md)** - How to run the automated API test suite and interpret results
+- **[Performance Results](docs/development/PERFORMANCE_RESULTS.md)** - Detailed performance benchmarks and validation
 
 ### **Development & Deployment**
-- **[Project Structure](PROJECT_STRUCTURE.md)** - A map of the codebase and component organization
-- **[Troubleshooting Guide](TROUBLESHOOTING.md)** - Common issues and debugging tips
-- **[Advanced Deployments](ADVANCED_DEPLOYMENTS.md)** - Scaling and enterprise integration options
+- **[Project Structure](docs/development/PROJECT_STRUCTURE.md)** - A map of the codebase and component organization
+- **[Troubleshooting Guide](docs/guides/TROUBLESHOOTING.md)** - Common issues and debugging tips
 
 ### **Examples & Integration**
-- **[Examples Directory](examples/README.md)** - Usage examples and demonstrations
+- **[Examples Directory](docs/examples/README.md)** - Usage examples and demonstrations
 - **[React UI Project Plan](REACT_UI_PROJECT_PLAN.md)** - Web interface implementation roadmap
 
 ## ✅ Why Choose Mock SNMP Agent?
@@ -127,7 +126,7 @@ Mock SNMP Agent offers unparalleled value for network monitoring and SNMP client
 ## 🤝 Contributing & Support
 
 - **Issues**: Report bugs and feature requests via [GitHub issues](https://github.com/mhuot/mock-snmp-agent/issues)
-- **Contributing**: For development setup and contributing guidelines, see [CLAUDE.md](CLAUDE.md)
+- **Contributing**: For development setup and contributing guidelines, see [docs/development/CLAUDE.md](docs/development/CLAUDE.md)
 
 ## 📄 License
 

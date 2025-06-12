@@ -13,10 +13,10 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from rest_api.controllers import MockSNMPAgentController
+from src.rest_api.controllers import MockSNMPAgentController
 
 # Import modules to test
-from rest_api.models import (
+from src.rest_api.models import (
     AgentStatus,
     AgentStatusResponse,
     ConfigurationResponse,
@@ -26,7 +26,7 @@ from rest_api.models import (
     OIDListResponse,
     RestartResponse,
 )
-from rest_api.server import SNMPAgentAPIServer
+from src.rest_api.server import SNMPAgentAPIServer
 
 
 class TestModels:
@@ -403,7 +403,7 @@ class TestIntegration:
 
     def test_api_server_creation(self):
         """Test API server creation function."""
-        from rest_api.server import create_api_server
+        from src.rest_api.server import create_api_server
 
         server = create_api_server(
             api_host="127.0.0.1", api_port=8081, cors_enabled=True

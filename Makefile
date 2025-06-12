@@ -41,15 +41,15 @@ test-extensive:
 # Code quality targets
 lint:
 	@echo "Running pylint..."
-	pylint *.py tests/ --fail-under=8.0
+	pylint src/ tests/ --fail-under=8.0
 	@echo "Running bandit security scan..."
-	bandit -r . -f json -o bandit-report.json --severity-level medium || true
+	bandit -r src/ -f json -o bandit-report.json --severity-level medium || true
 	@echo "Running safety check..."
 	safety check || true
 
 format:
 	@echo "Formatting code with black..."
-	black *.py tests/
+	black src/ tests/ scripts/
 
 # Build targets
 clean:
@@ -89,10 +89,10 @@ dev-setup: install-dev
 
 # Legacy test commands for backward compatibility
 test-basic:
-	python test_prd_requirements.py --basic
+	python scripts/testing/test_prd_requirements.py --basic
 
 test-prd:
-	python test_prd_requirements.py
+	python scripts/testing/test_prd_requirements.py
 
 test-performance:
-	python performance_test.py
+	python scripts/testing/performance_test.py

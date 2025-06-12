@@ -21,11 +21,11 @@ from fastapi.testclient import TestClient
 from websockets import connect
 from websockets.exceptions import ConnectionClosed
 
-from rest_api.controllers import MockSNMPAgentController
-from rest_api.models import AgentStatus, HealthStatus
+from src.rest_api.controllers import MockSNMPAgentController
+from src.rest_api.models import AgentStatus, HealthStatus
 
 # Import the API server and components
-from rest_api.server import SNMPAgentAPIServer
+from src.rest_api.server import SNMPAgentAPIServer
 
 
 class TestAPIEndpoints:
@@ -194,7 +194,7 @@ class TestQueryEndpoints:
     @pytest.fixture
     def client(self):
         """Create test client with query endpoints."""
-        from rest_api.server import SNMPAgentAPIServer
+        from src.rest_api.server import SNMPAgentAPIServer
 
         server = SNMPAgentAPIServer()
         return TestClient(server.app)
@@ -295,7 +295,7 @@ class TestSimulationEndpoints:
     @pytest.fixture
     def client(self):
         """Create test client with simulation endpoints."""
-        from rest_api.server import SNMPAgentAPIServer
+        from src.rest_api.server import SNMPAgentAPIServer
 
         server = SNMPAgentAPIServer()
         return TestClient(server.app)
@@ -403,7 +403,7 @@ class TestExportImportEndpoints:
     @pytest.fixture
     def client(self):
         """Create test client with export/import endpoints."""
-        from rest_api.server import SNMPAgentAPIServer
+        from src.rest_api.server import SNMPAgentAPIServer
 
         server = SNMPAgentAPIServer()
         return TestClient(server.app)
@@ -495,7 +495,7 @@ class TestWebSocketEndpoints:
         """Start WebSocket server for testing."""
         import uvicorn
 
-        from rest_api.server import SNMPAgentAPIServer
+        from src.rest_api.server import SNMPAgentAPIServer
 
         server = SNMPAgentAPIServer(api_port=8081)
 
@@ -579,7 +579,7 @@ class TestErrorHandling:
     @pytest.fixture
     def client(self):
         """Create test client."""
-        from rest_api.server import SNMPAgentAPIServer
+        from src.rest_api.server import SNMPAgentAPIServer
 
         server = SNMPAgentAPIServer()
         return TestClient(server.app)
