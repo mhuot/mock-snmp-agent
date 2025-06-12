@@ -89,6 +89,57 @@ snmpget -v3 -l authPriv -u simulator -a MD5 -A auctoritas -x DES -X privatus \
 
 For detailed installation options (local Python, extended Docker configs) and more advanced usage examples, see the Deeper Dives & Guides section below.
 
+## 🏗️ Architecture Overview
+
+Mock SNMP Agent is built as an enhancement layer on top of the proven snmpsim-lextudio engine:
+
+```mermaid
+graph TB
+    Client[SNMP Client] --> MSA[Mock SNMP Agent]
+    RestAPI[REST API Client] --> MSA
+    WebSocket[WebSocket Client] --> MSA
+
+    MSA --> |subprocess| SNMPSim[snmpsim-lextudio]
+    MSA --> |generates| SnmpRec[.snmprec files]
+    MSA --> |manages| Config[Configuration]
+
+    SNMPSim --> |SNMP responses| Client
+
+    subgraph "Mock SNMP Agent Extensions"
+        MSA
+        FastAPI[FastAPI Layer]
+        WS[WebSocket Manager]
+        Behaviors[Behavior Modules]
+        StateMachine[State Machine]
+    end
+
+    subgraph "Core SNMP Engine"
+        SNMPSim
+        SnmpRec
+    end
+
+    style MSA fill:#e1f5fe
+    style SNMPSim fill:#f3e5f5
+    style FastAPI fill:#e8f5e8
+    style WS fill:#e8f5e8
+    style Behaviors fill:#e8f5e8
+    style StateMachine fill:#e8f5e8
+```
+
+**Key Design Principles:**
+- **🔒 Non-invasive**: Preserves snmpsim's proven SNMP protocol integrity
+- **🏗️ Layered Architecture**: Clean separation between SNMP core and enterprise features
+- **📡 Standards-compliant**: All SNMP protocol handling by battle-tested snmpsim engine
+- **🚀 Enterprise-ready**: Adds REST API, WebSocket monitoring, and advanced behaviors
+
+**Technical Relationship:**
+- **Foundation**: Uses `snmpsim-lextudio>=1.1.1` as core SNMP protocol engine
+- **Integration**: Subprocess-based execution of `snmpsim-command-responder`
+- **Enhancement**: Generates dynamic `.snmprec` files with advanced simulation behaviors
+- **Extension**: Adds FastAPI REST layer, WebSocket real-time monitoring, and configuration management
+
+This architecture ensures **protocol correctness** through snmpsim while adding **enterprise capabilities** for modern testing environments.
+
 ## 📚 Deeper Dives & Guides
 
 Explore the full capabilities and documentation:
