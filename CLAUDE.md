@@ -126,6 +126,40 @@ Modules in `/variation/` implement:
 
 ## Critical Development Guidelines
 
+### Pre-Commit Safety Protocol (MANDATORY)
+```bash
+# ALWAYS run before ANY commit - prevents contamination and scope creep
+git diff --cached --stat              # Verify scope matches commit message
+git diff --cached --name-only         # Check which files are being modified
+git status                           # Ensure no unintended changes
+
+# If more than 5 files changed, verify each one is intentional
+# If any critical files changed, double-check content
+```
+
+### Critical File Protection
+These files require EXTRA verification before modification:
+- **README.md** - Must remain Mock SNMP Agent content (never 'act' or other projects)
+- **LICENSE** - Should never be truncated (219 lines → 42 lines = CONTAMINATION)
+- **requirements.txt** - Changes must be intentional and documented
+- **.github/workflows/*** - Test syntax locally before committing
+
+### Commit Quality Standards
+```bash
+# Commit message must accurately describe ALL changes
+❌ "Fix API Tests workflow script paths" (but changes 13 files including README/LICENSE)
+✅ "Fix API Tests workflow timeout in docker environment"
+✅ "Move CLAUDE.md to docs/development/ for better organization"
+
+# One logical change per commit (atomic commits)
+❌ Multiple unrelated changes in single commit
+✅ Separate commits for: move files, fix workflows, update docs
+
+# Avoid workflow thrashing - plan changes, don't commit 4 times in a row
+❌ 4 consecutive commits all touching same workflow
+✅ One well-tested workflow commit
+```
+
 ### Pre-Development Checklist (MANDATORY)
 ```bash
 # 1. Clear port conflicts
@@ -180,6 +214,30 @@ python src/mock_snmp_agent.py --help > /dev/null && echo "CLI OK"
 
 ## Emergency Recovery
 
+### Commit Contamination Recovery
+If you detect contamination (wrong project content in files):
+```bash
+# IMMEDIATELY check what was contaminated
+git diff HEAD~1 --name-only           # See what changed
+git show HEAD -- README.md | head -5  # Check if README is still Mock SNMP Agent
+
+# If contaminated, revert specific files
+git checkout HEAD~1 -- README.md LICENSE requirements.txt
+
+# Then commit the fix with clear message
+git commit -m "Revert contamination from [source] in README.md and LICENSE"
+```
+
+### Workflow Thrashing Recovery
+If you've made multiple failed workflow commits:
+```bash
+# Stop committing, test locally first
+git reset --soft HEAD~3              # Uncommit last 3 commits (keeps changes)
+# Fix all issues at once
+# Make ONE well-tested commit
+```
+
+### General CI/Docker Recovery
 If CI/Docker fails:
 ```bash
 python scripts/tools/cleanup_ports.py              # Clear ports
@@ -193,6 +251,7 @@ Common CI failures:
 - Import errors (check module structure)
 - Formatting (run black)
 - Broad exceptions (use specific ones)
+- Contamination (check README.md still says "Mock SNMP Agent")
 
 ## CI/CD Troubleshooting
 
